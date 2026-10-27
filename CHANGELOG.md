@@ -1,15 +1,17 @@
 # 更新记录
 
-## 2026-10 · 仓库精简与单包分发
+## 2026-10-27 · 仓库精简与单包分发（Fork 后修改）
+
+本次修改基于原作者 `7toCR` 的仓库，由 Fork 维护者完成。
 
 - 仓库根目录精简为 `skills/`、`LICENSE`、`README.md`、`CHANGELOG.md` 和 `.gitignore`。
 - 删除 Claude、Cursor、GitHub Copilot、Windsurf 的仓库专用配置及重复 skill 镜像。
 - 将原 `evals/` 迁入 `skills/paper2patent/evals/`，使一个 `paper2patent.zip` 同时包含运行资源和维护评估工具。
 - 普通论文转专利任务不加载评估材料；只有维护、对比或评估 skill 时才读取 `evals/README.md`。
 
-## 2026-10 · paper2patent Skill 升级
+## 2026-10 · paper2patent Skill 升级（原作者：7toCR）
 
-本次升级重写了 `skills/paper2patent/`，目标是让生成的申请文件可以直接交给专利代理师审核，减少返工。下面先列旧版的实测问题，再说明改动。
+以下升级内容由原作者 `7toCR` 完成。本次升级重写了 `skills/paper2patent/`，目标是让生成的申请文件可以直接交给专利代理师审核，减少返工。下面先列旧版的实测问题，再说明改动。
 
 ### 一、旧版实测问题（commit 6a37c3a）
 
