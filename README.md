@@ -16,7 +16,7 @@
 >
 > **欢迎免费公开使用，但严禁将本项目直接复制到其他仓库并声称是你的原创成果。如需引用或参考，请注明原始来源并链接回本仓库。**
 >
-> 本项目基于 [MIT License](LICENSE) 开源，社区使用规范见 [CLAUSE.md](CLAUSE.md)。
+> 本项目基于 [MIT License](LICENSE) 开源，使用与再分发请遵守许可证条款。
 
 ## 为什么做这个项目
 
@@ -39,14 +39,14 @@
 
 | 方式 | 适合 | 产出 |
 |---|---|---|
-| **paper2patent Skill**（推荐） | Codex、Claude、Claude Code、Cursor 等支持 Skills 的工具 | Word/PDF 申请文件、黑白附图、撰写说明 |
+| **paper2patent Skill**（推荐） | Codex、Kiro 等支持 Agent Skills 的工具，以及可上传文件夹的 Agent | Word/PDF 申请文件、黑白附图、撰写说明 |
 | **论文转专利 Flash** | 任意大模型对话，快速出一版初稿 | 五部分纯文本 |
 | **论文转专利 Pro** | 需要更细的撰写规范和自检 | 五部分纯文本 |
 | **专利附图生成（Gemini）** | 已有专利文本，生成参考附图 | 附图图片 |
 
 ## paper2patent Skill
 
-在支持 Skills 的 AI 工具中，把"读论文 → 判断公开状态 → 规划权利要求 → 撰写 → 画图 → 检查 → 生成 Word/PDF"整套流程交给 AI 完成。作者主要在 **Codex** 中验证，也兼容 Claude、Claude Code、Cursor、Windsurf。
+在支持 Agent Skills 的 AI 工具中，把"读论文 → 判断公开状态 → 规划权利要求 → 撰写 → 画图 → 检查 → 生成 Word/PDF"整套流程交给 AI 完成。整个可分发单元都在 `skills/paper2patent/` 中，不依赖特定 Agent 的仓库配置目录。
 
 ### 安装
 
@@ -58,9 +58,16 @@ cd paper2patent
 | 工具 | 安装方式 |
 |---|---|
 | Codex | macOS/Linux：`cp -R skills/paper2patent ~/.codex/skills/`<br>Windows：`Copy-Item -Recurse -Force .\skills\paper2patent "$env:USERPROFILE\.codex\skills\"` |
-| Claude Code | 在本仓库内直接可用（`.claude/skills/paper2patent/`）；全局使用时复制到 `~/.claude/skills/` |
-| Claude 桌面版 / 网页版 | 把 `skills/paper2patent/` 打包为 zip，在设置的 Skills 区域上传 |
-| Cursor / Windsurf | 使用 `.cursor/rules/`、`.windsurf/rules/` 中的项目规则，并引用 `skills/paper2patent/` |
+| Kiro 或其他支持 Agent Skills 的工具 | 将 `skills/paper2patent/` 导入该工具的 Skills 目录；具体目标路径按工具版本的说明设置 |
+| 豆包工作等支持文件上传的 Agent | 上传 `paper2patent.zip`，并明确要求先读取根目录中的 `SKILL.md`；是否自动触发取决于该 Agent 是否支持 Skills 规范 |
+
+只分发 skill 时，在仓库根目录执行：
+
+```bash
+cd skills
+zip -r paper2patent.zip paper2patent \
+  -x 'paper2patent/evals/inputs/*' 'paper2patent/evals/runs/*' '*/__pycache__/*' '*.pyc'
+```
 
 **升级**：本仓库没有版本号，升级即 `git pull` 后重新复制。先删除旧目录再复制，避免已删除的旧文件残留：
 
@@ -91,7 +98,7 @@ rm -rf ~/.codex/skills/paper2patent && cp -R skills/paper2patent ~/.codex/skills
 <summary><b>目录结构</b></summary>
 
 ```text
-skills/paper2patent/                 Skill 主版本（.claude/skills/paper2patent/ 为同步镜像）
+skills/paper2patent/                 可独立打包和分发的完整 Skill
 ├── SKILL.md                         工作流与核心规则
 ├── references/
 │   ├── patentability-and-disclosure.md   论文公开与新颖性、AI/算法发明的客体与充分公开
@@ -106,8 +113,8 @@ skills/paper2patent/                 Skill 主版本（.claude/skills/paper2pate
 │   ├── generate_patent_drawings.py  黑白专利附图（SVG + PNG）
 │   ├── generate_patent_docx.py      申请文件与撰写说明（DOCX）
 │   └── export_patent_pdf.py         PDF 导出与逐页预览
-└── assets/example_patent_content.json   完整的结构化内容示例
-evals/                               评估方案：评分细则、盲评流程、结构检查脚本
+├── assets/example_patent_content.json   完整的结构化内容示例
+└── evals/                           维护用评估方案、评分细则和结构检查脚本
 ```
 
 </details>
@@ -1087,7 +1094,7 @@ evals/                               评估方案：评分细则、盲评流程�
 ## 更新记录与评估
 
 - 更新记录：[CHANGELOG.md](CHANGELOG.md)
-- 评估方法（评分细则、盲评流程、结构检查脚本）：[evals/README.md](evals/README.md)
+- 评估方法（评分细则、盲评流程、结构检查脚本）：[skills/paper2patent/evals/README.md](skills/paper2patent/evals/README.md)
 
 ## 致谢
 

@@ -83,3 +83,7 @@ Give the user the files and a short message: the invention points claim 1 rests 
 | 根据说明书画专利附图 | `drawing-generation.md`; nodes and edges only from the text and paper figures |
 | 检查这份专利草稿 / 是否忠实原文 | `review`: run the checker on the draft, then audit each claim feature against the paper using `quality-checklist.md` |
 | 论文已经发表了还能申请吗 | Answer from `patentability-and-disclosure.md`; recommend confirming with a patent attorney |
+
+## Skill maintenance and evaluation
+
+Only when the user asks to modify, benchmark or evaluate this skill, read `evals/README.md`. The bundled evaluation materials are maintenance tools; do not load or run them during ordinary paper-to-patent drafting.

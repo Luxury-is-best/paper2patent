@@ -1,8 +1,15 @@
 # 更新记录
 
+## 2026-10 · 仓库精简与单包分发
+
+- 仓库根目录精简为 `skills/`、`LICENSE`、`README.md`、`CHANGELOG.md` 和 `.gitignore`。
+- 删除 Claude、Cursor、GitHub Copilot、Windsurf 的仓库专用配置及重复 skill 镜像。
+- 将原 `evals/` 迁入 `skills/paper2patent/evals/`，使一个 `paper2patent.zip` 同时包含运行资源和维护评估工具。
+- 普通论文转专利任务不加载评估材料；只有维护、对比或评估 skill 时才读取 `evals/README.md`。
+
 ## 2026-10 · paper2patent Skill 升级
 
-本次升级重写了 `skills/paper2patent/`（`.claude/skills/paper2patent/` 同步），目标是让生成的申请文件可以直接交给专利代理师审核，减少返工。下面先列旧版的实测问题，再说明改动。
+本次升级重写了 `skills/paper2patent/`，目标是让生成的申请文件可以直接交给专利代理师审核，减少返工。下面先列旧版的实测问题，再说明改动。
 
 ### 一、旧版实测问题（commit 6a37c3a）
 
@@ -192,12 +199,12 @@
 - **附图：定向返回**：
   - 一个检查决定返回哪个阶段时，为每个可返回的阶段画一条带标签的返回线，并同时画出停止条件。
   - 绘图脚本对同一节点发出的多条回线错开起点，标签放在进入目标阶段的那一段线上，避免互相遮挡。
-- **评估方案**（新增 `evals/`）：
+- **评估方案**（现位于 `skills/paper2patent/evals/`）：
   - `rubric.md`：按两轮评审整理出 9 个评分维度和盲评步骤。
   - `evals.json`：5 篇不同类型的公开论文。
   - `grade_structure.py`：自动结构检查。
   - `README.md`：固定条件、每篇至少 3 次运行、成对盲评、结论规则。
-  - `evals/inputs/` 与 `evals/runs/` 不进仓库。
+  - `skills/paper2patent/evals/inputs/` 与 `skills/paper2patent/evals/runs/` 不进仓库。
 
 ### 四、已知限制
 
@@ -205,5 +212,5 @@
 - 附图布局为自动分层布局。复杂原图建议拆成多幅附图（每幅约15个节点以内），也可调整 `nodes` 顺序减少交叉。
 - 法律规则截至《专利审查指南》2026年1月1日施行版本。生成内容为草稿，提交前应由专利代理师审核并进行现有技术检索。
 - 权利要求保护范围的取舍（哪些特征属于必要技术特征）仍依赖模型判断和代理师审核；新增的分拣步骤和检查警告只能降低"整条流程写进权利要求1"的倾向，不能替代基于现有技术的判断。
-- 本轮修改尚未按 `evals/README.md` 的方案做多论文、多次运行的盲评，效果有待验证；新增检查多为启发式提示（WARN），需要人工判断。
+- 本轮修改尚未按 `skills/paper2patent/evals/README.md` 的方案做多论文、多次运行的盲评，效果有待验证；新增检查多为启发式提示（WARN），需要人工判断。
 - README 中的 Flash/Pro/Gemini 提示词模板本次未修改；其中权利要求加"#"、摘要关键词段等写法与 Skill 新规范不一致，建议后续同步。

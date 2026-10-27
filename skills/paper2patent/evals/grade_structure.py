@@ -12,7 +12,7 @@ scripts, unsupported numbers). Quality of claim scope, sufficiency and
 fidelity needs the rubric in rubric.md and a blind comparison.
 
 Usage:
-    python evals/grade_structure.py --source inputs/paper.txt RUN_DIR [RUN_DIR ...]
+    python <skill>/evals/grade_structure.py --source <skill>/evals/inputs/paper.txt RUN_DIR [RUN_DIR ...]
 """
 
 from __future__ import annotations
@@ -24,8 +24,8 @@ import sys
 import zipfile
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(REPO / "skills" / "paper2patent" / "scripts"))
+SKILL_DIR = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(SKILL_DIR / "scripts"))
 from check_patent_draft import run_checks  # noqa: E402
 
 

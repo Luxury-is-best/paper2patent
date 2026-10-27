@@ -19,8 +19,8 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
-# Evaluation inputs and outputs (papers may be unpublished)
-evals/inputs/
-evals/runs/
+# Evaluation inputs and outputs bundled with the skill (papers may be unpublished)
+skills/paper2patent/evals/inputs/
+skills/paper2patent/evals/runs/
 gudie/
 reference/

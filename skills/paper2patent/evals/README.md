@@ -22,7 +22,7 @@
 | 系统效率 | 技术性 |
 | 时间序列预测 | 客体风险、公开状态 |
 
-- 把 PDF 下载到 `evals/inputs/`，再用 `pdftotext -layout` 生成同名 `.txt`，供数值核对使用。
+- 把 PDF 下载到 `<skill>/evals/inputs/`，再用 `pdftotext -layout` 生成同名 `.txt`，供数值核对使用。
 - 自己未公开的论文也可以加入，但只放在本地 `inputs/`，`inputs/` 和 `runs/` 已在 `.gitignore` 中。
 
 ## 3. 运行次数
@@ -35,7 +35,9 @@
 **结构检查（自动）**
 
 ```bash
-python evals/grade_structure.py --source evals/inputs/2308.00352.txt evals/runs/multi-agent-llm/new/run-*
+python <skill>/evals/grade_structure.py \
+  --source <skill>/evals/inputs/2308.00352.txt \
+  <skill>/evals/runs/multi-agent-llm/new/run-*
 ```
 
 - 检查内容：申请文件是否干净、权利要求布局、检查脚本的错误与范围类警告、交接清单、充分公开核查、是否编写了绕过脚本、数值能否在论文中找到。
@@ -61,4 +63,16 @@ python evals/grade_structure.py --source evals/inputs/2308.00352.txt evals/runs/
 
 ## 6. 回归样例
 
-每次修改脚本后，先用自带示例做冒烟测试（见 `CLAUDE.md`），再跑上述评估。
+每次修改 skill 后，先验证目录结构并用自带示例做冒烟测试，再跑上述评估。将 `<skill>` 替换为 `paper2patent` skill 的实际目录：
+
+```bash
+python <skill-creator>/scripts/quick_validate.py <skill>
+mkdir -p /tmp/p2p
+cp <skill>/assets/example_patent_content.json /tmp/p2p/example.json
+python <skill>/scripts/check_patent_draft.py /tmp/p2p/example.json
+python <skill>/scripts/generate_patent_drawings.py /tmp/p2p/example.json -o /tmp/p2p/out --update-json
+python <skill>/scripts/generate_patent_docx.py /tmp/p2p/example.json -o /tmp/p2p/out/example.docx --require-drawings
+python <skill>/scripts/export_patent_pdf.py /tmp/p2p/out/example.docx -o /tmp/p2p/out/example.pdf --preview-dir /tmp/p2p/out/preview
+```
+
+最后运行 `git diff --check`。评估目录随 skill 一起分发，但普通论文转专利任务不需要读取或运行它。
