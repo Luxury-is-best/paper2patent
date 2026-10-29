@@ -81,7 +81,10 @@ def docx_paragraphs(path: Path) -> list[str]:
 
 def pick(run: Path, pattern: str, exclude: str | None = None) -> Path | None:
     """Find the shallowest matching file in a run directory, ignoring preview/ and grading files."""
-    ignored_names = {"grading.json", "run_meta.json", "blind_key.json", "summary.json"}
+    ignored_names = {
+        "grading.json", "run_meta.json", "blind_key.json", "summary.json",
+        "fto_candidates.json", "fto_analysis.json", "fto_extra_search.json", "fto_extra_details.json",
+    }
     hits = [
         p for p in run.rglob(pattern)
         if "preview" not in p.parts and p.name not in ignored_names
@@ -256,13 +259,23 @@ def grade(
         })
 
     app = pick(run, "*.docx", exclude="撰写说明")
+    if app and "FTO" in app.name:
+        # Ensure FTO report DOCX is not mistaken for the main application DOCX
+        hits = [
+            p for p in run.rglob("*.docx")
+            if "preview" not in p.parts and "撰写说明" not in p.name and "FTO" not in p.name
+        ]
+        app = sorted(hits, key=lambda p: (len(p.parts), len(p.name)))[0] if hits else None
     notes_doc = pick(run, "*撰写说明*.docx")
     pdf = pick(run, "*.pdf")
     final_msg = pick(run, "final_message.md")
     content: dict[str, Any] | None = None
     content_path: Path | None = None
     for candidate in sorted(run.rglob("*.json"), key=lambda p: (len(p.parts), len(p.name))):
-        if candidate.name in {"grading.json", "run_meta.json", "blind_key.json", "summary.json"}:
+        if candidate.name in {
+            "grading.json", "run_meta.json", "blind_key.json", "summary.json",
+            "fto_candidates.json", "fto_analysis.json", "fto_extra_search.json", "fto_extra_details.json",
+        }:
             continue
         try:
             data = json.loads(candidate.read_text(encoding="utf-8-sig"))
