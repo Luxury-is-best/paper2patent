@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "patent-platform": {
+      "type": "http",
+      "url": "https://patent.jiuan.com/mcp",
+      "headers": {
+        "Authorization": "Bearer pp_0d8adde7a5d3edb69506e20869633bcf6fb2894f"
+      }
+    }
+  }
+}
