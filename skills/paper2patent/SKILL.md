@@ -1,50 +1,50 @@
 ---
 name: paper2patent
-description: Turn an academic paper (PDF, LaTeX, pasted text, thesis chapter or technical disclosure) into a Chinese invention patent application draft — 说明书摘要、摘要附图、权利要求书、说明书、说明书附图 — delivered as DOCX/PDF with black-and-white patent drawings, plus a separate drafting-notes file covering novelty/disclosure risk, claim layout and claim-to-paper support. Use whenever the user wants to 论文转专利, 写专利/专利申请书/专利交底书, draft or review 权利要求书, write a 说明书, make 专利附图, or check a patent draft against its source paper, even if they only say "帮我把这篇论文写成专利".
+description: 将学术论文（PDF、LaTeX、粘贴文本、学位论文章节或技术交底书）转化为中国发明专利申请初稿——说明书摘要、摘要附图、权利要求书、说明书、说明书附图——以附带黑白专利附图的 DOCX/PDF 格式交付，并附带一份独立的撰写说明文件（涵盖新颖性/公开风险、权利要求布局及权利要求与论文的支撑关系）。每当用户希望“论文转专利”、“写专利/专利申请书/专利交底书”、起草或审查“权利要求书”、撰写“说明书”、制作“专利附图”，或根据源论文核对专利草稿时使用，即使他们只说了“帮我把这篇论文写成专利”。
 ---
 
 # Paper2Patent
 
-Convert a paper into a Chinese invention patent application draft that a patent attorney (专利代理师) can review and file with minimal rework. The output is a draft, not legal advice; say so once in the delivery message.
+将论文转化为中国发明专利申请初稿，使专利代理师能够在最小返工量的情况下完成审核与提交。输出内容仅为草稿，不构成法律意见；请在交付信息中说明一次。
 
-## What good looks like
+## 优秀的标准
 
-A strong draft does four things the paper itself does not:
+一份高质量的专利草稿能做到论文本身做不到的四件事：
 
-1. **Claims that define a protectable scope.** Claim 1 contains exactly the features needed to solve the technical problem (the distinguishing features over the closest prior art) and nothing paper-specific that a competitor could trivially design around. Specific values, model names and optional modules move to dependent claims and embodiments.
-2. **A specification that enables and supports.** A skilled person can reproduce the invention from the 具体实施方式 alone, and every claim term is explained there. For AI inventions this means the model's modules/layers/connections, training steps and parameters, and how inputs and outputs map to the application scene (专利审查指南, 2026-01-01 revision).
-3. **Technical character.** The solution is framed as technical means solving a technical problem with a technical effect, so it is not rejected as 智力活动的规则和方法 (专利法第25条).
-4. **Complete fidelity.** Every technical feature is traceable to the paper. Patent-style generalisation is allowed where the paper supports it; invention is not. Missing information becomes an explicit `【待补充：…】` placeholder, never a guess — added matter cannot be supported later and misrepresents the inventors' work.
+1. **界定具有保护范围的权利要求**：独立权利要求 1 仅包含解决技术问题所必需的技术特征（相对于最接近现有技术的区别技术特征），绝不包含竞品可以轻易规避的论文专有细节。具体数值、模型专有名称和可选模块均下沉至从属权利要求和实施例中。
+2. **充分公开且有支撑的说明书**：所属技术领域的技术人员仅凭“具体实施方式”即可重现该发明，且权利要求中的每一个术语都在说明书中得到清晰阐释。对于人工智能领域发明，这意味着必须公开模型的模块/层级/连接关系、训练步骤与参数，以及输入输出如何映射到实际应用场景（依据《专利审查指南》2026-01-01 修改版）。
+3. **技术属性**：方案必须表述为“采用技术手段解决技术问题并产生技术效果”，避免因属于“智力活动的规则和方法”而被驳回（《专利法》第25条）。
+4. **完全忠实原文**：每一项技术特征均可追溯至论文。在论文有合理支撑的前提下允许进行专利式上位概括，严禁凭空捏造发明。缺失的信息必须使用明确的 `【待补充：…】` 占位符标出，严禁擅自猜测——虚构内容后续无法补足支撑，且歪曲了发明人的工作。
 
-## Workflow
+## 工作流
 
-### 1. Intake
+### 1. 需求与输入接入（Intake）
 
-- Pick the mode: `direct` (default: draft everything, mark gaps), `human-in-loop` (confirm disclosure status, invention points and claim plan with the user before drafting), `text-only` (no files), `claims-only`, or `review` (check an existing draft against the paper).
-- Read the **whole** paper: every section, equation, figure, caption, table and appendix. For a PDF, render the pages that contain the method figures and look at them; for text-only input, work from the figure descriptions and captions. The drawings must follow the paper's actual structure. See `references/input-requirements.md` for PDF handling and the minimum input.
-- Establish the **disclosure status** (arXiv? accepted/published? public code? talk?) and dates. This decides whether the patent can still be novel. Read `references/patentability-and-disclosure.md` — every time, because the answer changes what you tell the user.
+- 选择工作模式：`direct`（默认：直接撰写全部内容并标注缺失项）、`human-in-loop`（起草前先向用户确认公开状态、发明点及权利要求规划）、`text-only`（仅输出文本，不生成文件）、`claims-only`（仅撰写权利要求书），或 `review`（根据论文审查已有专利草稿）。
+- 通读**整篇**论文：每个章节、公式、附图、图注、表格及附录。对于 PDF 输入，渲染包含方法图的页面并仔细审阅；对于纯文本输入，根据图注和图例说明开展工作。附图必须遵循论文的实际技术结构。有关 PDF 处理与最低输入要求，详见 `references/input-requirements.md`。
+- 确认**公开状态**（arXiv？已录用/已发表？开源代码？学术汇报？）与公开日期。这直接决定了该专利是否仍具备新颖性。每次都请阅读 `references/patentability-and-disclosure.md`，因为核实结果将决定对用户的提示内容。
 
-### 2. Source fact sheet (internal)
+### 2. 原始事实清单（内部使用）
 
-Before drafting, list the technical facts you will rely on, each with its location (§3.2, Eq. (4), Fig. 2, Table 3, Appendix B). Separate: (a) the paper's own contributions, (b) prior art the paper describes (related work, baselines), (c) experimental settings and results. This list is the backbone for fidelity, for `support_map`, and for the 背景技术 section. Do not show it to the user unless asked.
+在开始撰写前，梳理出将要依赖的技术事实清单，并标注各事实在论文中的具体位置（如 §3.2、Eq. (4)、Fig. 2、Table 3、Appendix B）。明确区分：(a) 论文自身的创新贡献，(b) 论文描述的现有技术（相关工作、对比基线），(c) 实验设置与结果。该清单是确保忠实原文、构建 `support_map`（支撑关系映射）以及撰写“背景技术”部分的核心依据。除非用户要求，否则无需向用户展示。
 
-### 3. Invention mining and claim plan
+### 3. 发明挖掘与权利要求规划
 
-Identify the closest prior art (usually the strongest baseline or the method the paper improves on), the distinguishing features, the technical problem they solve and the technical effect they produce. Then plan the claim tree before writing any claim: triage every candidate claim-1 feature (necessary / embodiment choice / interface detail), give each separable mechanism its own dependent claim (one fallback position per claim, never merged to save numbering), check that every branch of a generalised claim 1 is supported in the description, add the standard carrier claims, and record all of this in `notes.claim_plan`. Do not simply transcribe the paper's pipeline into claim 1. Read `references/claims-drafting.md`.
+确定最接近的现有技术（通常是最强基线或论文改进的方法）、区别技术特征、所解决的技术问题以及产生的技术效果。在撰写具体权利要求之前预先规划权利要求树：对独立权利要求 1 的候选特征逐一甄别分类（必要技术特征 / 实施例特定选择 / 接口细节）；每个可分离的机制单独设置一个从属权利要求（每个权利要求对应一个退守方案，切勿为节省编号而合并）；核查上位概括后的权利要求 1 的每个分支在说明书中均有支撑；补充标准的载体权利要求（装置、计算设备、计算机可读存储介质等）；将上述规划记录在 `notes.claim_plan` 中。切勿简单地将论文的整个处理流程照搬进权利要求 1。具体写作要求详见 `references/claims-drafting.md`。
 
-### 4. Draft the five parts
+### 4. 撰写专利五部分
 
-Follow `references/patent-drafting-standard.md` for the structure, content and language of each part, including the paper-to-patent mapping (what to keep, transform, or drop). Write in Simplified Chinese patent register: 本发明/本实施例, never 本文/我们/论文/作者. Keep technical clarifications (what a constraint or state actually means) in the text; move drafting remarks to the notes.
+参考 `references/patent-drafting-standard.md` 中各部分的结构、内容和语言规范，包括论文到专利的映射规则（保留、转化或舍弃的内容）。使用规范的简体中文专利语域书写：使用“本发明/本实施例”，严禁使用“本文/我们/论文/作者”。正文保留对技术本身的澄清说明（如某一约束或状态的实际技术含义）；将与撰写过程相关的备注说明移入 notes。
 
-Then run the **sufficiency audit** (`patent-drafting-standard.md` §7): for every feature of claim 1 and the main dependent claims, check that the description states its data format, decision rule, failure handling and parameters. What the paper gives goes into the text; what it does not give goes into `notes.sufficiency` as a gap — never filled in by you. This audit is what produces a useful handover list; a draft that looks complete but hides its gaps is worse than one that names them.
+随后执行**充分公开审计**（`patent-drafting-standard.md` §7）：针对独立权利要求 1 及主要从属权利要求的每项技术特征，核查说明书是否详述了其数据格式、判定规则、异常/失败处理以及关键参数。论文已公开的内容写入正文；论文未提及的内容作为缺口记录在 `notes.sufficiency` 中——严禁自行脑补填补。该项审计是生成实用交接清单的关键；看似完整实则隐藏信息缺口的草稿，远不如明确标出缺口的草稿有价值。
 
-### 5. Drawings
+### 5. 附图绘制
 
-Design each figure as an explicit graph of nodes and edges taken from the paper's figures and method text. If the method checks, revises, retries or iterates, draw that loop (decision node + return edge) in the flowchart that illustrates claim 1, not just the success path. Read `references/drawing-generation.md`. A typical AI-method set: method flowchart (图1, also the 摘要附图), model/data-flow diagram redrawn from the paper's main figure, apparatus block diagram with reference numerals, electronic-device diagram.
+根据论文中的图表和方法描述，将每张附图设计为节点与边构成的明确图结构。如果方法涉及检查、修正、重试或循环迭代，必须在阐释权利要求 1 的流程图中完整绘制出循环流程（判定节点 + 回退边），而非仅画出成功路径。详见 `references/drawing-generation.md`。一套典型的 AI 方法附图包含：方法流程图（图1，同时作为摘要附图）、依据论文核心图重新绘制的模型/数据流架构图、带附图标记的装置结构框图、电子设备硬件示意图。
 
-### 6. Assemble, check, generate
+### 6. 组装、质检与生成
 
-Write the structured JSON described in `references/document-generation.md` (see `assets/example_patent_content.json` for a complete example). Then run, from the folder holding the JSON (`<skill>` = this skill's directory):
+编写 `references/document-generation.md` 中所描述的结构化 JSON（完整示例可参考 `assets/example_patent_content.json`）。随后在包含该 JSON 的目录下运行以下命令（`<skill>` 代表本技能所在目录）：
 
 ```bash
 python <skill>/scripts/check_patent_draft.py patent.json
@@ -53,37 +53,37 @@ python <skill>/scripts/generate_patent_docx.py patent.json -o out/<名称>_专�
 python <skill>/scripts/export_patent_pdf.py out/<名称>_专利申请文件.docx -o out/<名称>_专利申请文件.pdf --preview-dir out/preview
 ```
 
-- Fix every `ERROR` from the checker and judge every `WARN`; rerun until clean. The checker catches the formal defects (single period, uncertain words, dependency rules, antecedent basis, 300-character abstract, figure numbering, reference numerals) that are easy to miss when re-reading your own text, and warns about scope problems (code field names or negative limitations in claims, an over-long or enumeration-heavy claim 1, a revision loop that no drawing shows, drafting remarks in the description).
-- Look at every generated drawing PNG and at the preview pages before delivering. Fix the JSON and regenerate if anything is cramped, wrong or unsupported.
-- The DOCX step also writes `<名称>_专利申请文件_撰写说明.docx`: it opens with the handover checklist (every `【待补充】`, `notes.handover`, plus ownership, disclosure date and prior-art search), followed by disclosure risk, claim plan, support map, drawing sources and check results. Keep all non-application content there, not in the application file.
+- 修复校验脚本检测出的所有 `ERROR` 并逐项评估 `WARN`，反复运行直至通过。校验脚本能精准捕获自审文本时极易忽略的形式缺陷（单一终结句号、含糊词、引用依赖规则、引用基础/先行词、300字摘要字数限制、图号连续性、附图标记规范性），并对保护范围问题进行警示（权利要求中出现代码字段名或消极限制负面限定、权利要求 1 过长或堆砌列举过多、存在附图未呈现的修正回退循环、说明书中混入撰写备注等）。
+- 在正式交付前，仔细检查生成的每个附图 PNG 和预览页面。如发现布局拥挤、内容错误或缺乏原文依据，应修改 JSON 并重新生成。
+- DOCX 生成步骤还会同步输出 `<名称>_专利申请文件_撰写说明.docx`：文档开头即为交接核对清单（所有 `【待补充】` 占位符、`notes.handover`，外加权属确认、公开日期核实与现有技术检索建议），随后包含公开风险评估、权利要求布局规划、论文支撑映射表、附图溯源说明以及格式自检结果。所有非专利申请文件正文的内容均应保留在撰写说明中，严禁混入专利申请正文。
 
-Scripts need Python 3.9+. Pillow and a Chinese font are needed for drawings (the script refuses to render boxes-for-characters); LibreOffice for the PDF. If something is missing, install it or report the limitation — do not hand over drawings that show empty boxes.
+脚本运行环境需 Python 3.9+。附图生成需要 Pillow 及中文字体支持（若字体缺失导致文字渲染为方框字符，脚本将拒绝输出）；PDF 导出需要 LibreOffice。若缺少依赖，请安装相应依赖或向用户说明限制——绝不能交付带有方框乱码的附图。
 
-### 7. Deliver
+### 7. 交付
 
-Give the user the files and a short message: the invention points claim 1 rests on, the claim structure (e.g. "方法1–6 + 装置7 + 设备8 + 介质9"), where the handover checklist is (first section of the 撰写说明) and its most important items, the disclosure/novelty assessment, and a reminder that a patent attorney should review the draft and run a prior-art search before filing. Do not paste the checklist or your analysis.
+向用户交付生成的文件并附上简短说明：权利要求 1 所依托的核心发明点、权利要求结构布局（例如：“方法1–6 + 装置7 + 设备8 + 介质9”）、交接核对清单所在位置（《撰写说明》第一部分）及其最关键的待补充项、公开情况/新颖性评估结论，并郑重提醒：在正式提交申请前，务必由专业专利代理师审阅草稿并开展现有技术检索。无需在回复中完整粘贴核对清单或详细分析过程。
 
-## Rules that matter most
+## 核心准则
 
-- Fidelity beats completeness. No invented modules, parameters, datasets, hardware, scenarios, effects or numbers. Generalise only along lines the paper itself supports (alternatives it mentions, ablations, a generic description of a component).
-- Claims are definite: no 等、约、可以、例如、优选、不限于 and the like; one final 句号 per claim; dependent claims cite only earlier claims; terms introduced before "所述" is used.
-- Captions under drawings are just "图1", "图2"; titles go in 附图说明. No figure number, title, colour or shading inside an image.
-- The application text contains the technical disclosure only. Keep evidence boundaries the paper states; move remarks about the drafting, the paper or missing files into `notes`, and requests for material into `notes.handover`.
-- Be honest about what the draft is: it organises and discloses the paper's invention; it does not add inventive substance, and it says nothing about the chance of grant.
-- Keep one invention name (≤25 characters, no brand or model names) consistent across the abstract, claims and 说明书.
-- Never store the user's paper, drafts or personal data in repository files.
+- 忠实原文高于表面完整：严禁擅自捏造模块、参数、数据集、硬件环境、应用场景、技术效果或实验数值。仅允许在论文自身有明确支持的方向上进行上位概括（如论文提及的替代方案、消融实验、通用组件描述）。
+- 权利要求必须明确肯定：严禁出现“等”、“约”、“可以”、“例如”、“优选”、“不限于”等模糊词汇；每项权利要求仅允许在末尾使用一个句号；从属权利要求只能引用前面的权利要求；首次使用的技术术语在被“所述”引用前必须已明确引入。
+- 附图下方图注仅标明“图1”、“图2”；详细图题统一写入“附图说明”。图像内容内部不得包含图号、图题、彩色或阴影填充。
+- 专利申请文件正文仅包含技术方案的公开内容。严格遵循论文给出的事实边界；关于撰写意图、论文出处或缺失资料的说明统一放入 `notes`，需要发明人补充的材料统一记入 `notes.handover`。
+- 客观说明草稿定位：本草稿旨在系统梳理并充分公开论文中的技术方案，并未注入额外的发明构思，亦不对最终授权概率作任何保证。
+- 保持发明名称（不超过25个字，严禁包含商业品牌或模型专有名称）在摘要、权利要求书和说明书全局严格一致。
+- 绝不在代码仓库中存储用户的论文原文、草稿或个人敏感数据。
 
-## Common requests
+## 常见处理场景
 
-| Request | What to do |
+| 用户需求 | 处理策略 |
 |---|---|
-| 把这篇论文写成专利 / 生成专利申请书 Word、PDF | Full workflow, `direct` mode |
-| 先帮我梳理发明点再写 | `human-in-loop`: report disclosure status, invention points and claim plan; draft after confirmation |
-| 只写权利要求书 | Steps 1–3, `claims-drafting.md`, run the checker on a JSON containing only claims |
-| 根据说明书画专利附图 | `drawing-generation.md`; nodes and edges only from the text and paper figures |
-| 检查这份专利草稿 / 是否忠实原文 | `review`: run the checker on the draft, then audit each claim feature against the paper using `quality-checklist.md` |
-| 论文已经发表了还能申请吗 | Answer from `patentability-and-disclosure.md`; recommend confirming with a patent attorney |
+| 把这篇论文写成专利 / 生成专利申请书 Word、PDF | 执行完整工作流，采用 `direct` 模式 |
+| 先帮我梳理发明点再写 | 采用 `human-in-loop` 模式：先汇报公开状态、发明点及权利要求规划；用户确认后再撰写全文 |
+| 只写权利要求书 | 执行步骤 1–3，遵循 `claims-drafting.md`，对仅包含权利要求的 JSON 运行校验脚本 |
+| 根据说明书画专利附图 | 遵循 `drawing-generation.md`；节点与连接关系严格提取自说明书正文和论文原图 |
+| 检查这份专利草稿 / 是否忠实原文 | 采用 `review` 模式：先对草稿运行校验脚本，再依据 `quality-checklist.md` 逐条核对权利要求各项特征与论文的对应关系 |
+| 论文已经发表了还能申请吗 | 参考 `patentability-and-disclosure.md` 进行解答，并建议咨询专利代理师进一步核实宽限期/现有技术影响 |
 
-## Skill maintenance and evaluation
+## 技能维护与评测
 
-Only when the user asks to modify, benchmark or evaluate this skill, read `evals/README.md`. The bundled evaluation materials are maintenance tools; do not load or run them during ordinary paper-to-patent drafting.
+仅当用户明确要求修改、基准测试或评测本技能时，才查阅 `evals/README.md`。附带的评测套件属于技能维护工具，在常规的论文转专利撰写任务中无需加载或运行。

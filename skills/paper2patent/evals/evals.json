@@ -1,41 +1,195 @@
 {
   "skill_name": "paper2patent",
-  "notes": "论文 PDF 请自行下载到 <skill>/evals/inputs/（已在 .gitignore 中，不进仓库）。未公开的论文只放在本地 inputs/，不要提交。",
+  "version": "2.0",
+  "notes": "论文 PDF 请自行下载到 <skill>/evals/inputs/（已在 .gitignore 中，不进仓库），并使用 pdftotext -layout 生成同名 .txt 供数值溯源审计。未公开的论文只放在本地 inputs/，切勿提交到版本库。",
   "evals": [
     {
       "id": "multi-agent-llm",
-      "paper": "arXiv:2308.00352 (MetaGPT)",
+      "paper": "arXiv:2308.00352 (MetaGPT: Meta Programming for A Multi-Agent Collaborative Framework)",
+      "domain": "多智能体大语言模型系统（软件工程自动化）",
+      "mode": "direct",
+      "assumed_disclosure": "unpublished",
       "input": "inputs/2308.00352.pdf",
+      "source_txt": "inputs/2308.00352.txt",
       "prompt": "这是我们的论文，假设尚未以任何形式公开。请写成中国发明专利申请文件，要 Word 和 PDF。",
-      "focus": ["独立权利要求概括（角色分工是否写进权利要求1）", "从属权利要求一项一机制", "充分公开核查（提示词、消息格式）", "附图中的反馈回路"]
+      "focus": [
+        "独立权利要求概括（具体岗位角色分工是否下沉至从属权利要求，权利要求1是否聚焦标准化操作规程SOP、结构化通信产物与可执行反馈机制）",
+        "从属权利要求一项一机制（角色定义、结构化消息/文档接口、订阅/路由机制、可执行反馈调试各自独立成项）",
+        "充分公开核查（各阶段提示词模板、结构化产出物字段定义、测试生成与异常定位准则）",
+        "附图中的反馈回路（测试失败后回退至代码生成/修订并带终止条件的闭环流程图）"
+      ],
+      "must_have": [
+        "权利要求1聚焦多智能体通过结构化中间产物与可执行反馈进行协同处理的核心机制，而非绑定特定软件公司五种岗位名称",
+        "流程图中包含编译/测试校验判定节点（decision）及未通过时的返回修订回路",
+        "撰写说明（notes.sufficiency / notes.handover）明确列出各智能体具体提示词模板、结构化文档Schema细节及停止条件参数等需发明人补充的缺口"
+      ],
+      "must_not_have": [
+        "在权利要求1中硬编码“产品经理、架构师、项目经理、工程师、质量保证工程师”全部五个具体角色名称作为必要技术特征",
+        "在权利要求中直接写入代码变量名或英文类名（如 Role、Message、Environment、publish_message）",
+        "仅绘制从需求到代码的单向线性主流程而遗漏可执行反馈（Executable Feedback）迭代回路"
+      ],
+      "structural_assertions": {
+        "require_loop_in_drawings": true,
+        "claim1_forbidden_terms": ["产品经理", "架构师", "项目经理", "质量保证"]
+      }
     },
     {
       "id": "vision-architecture",
-      "paper": "arXiv:2103.14030 (Swin Transformer)",
+      "paper": "arXiv:2103.14030 (Swin Transformer: Hierarchical Vision Transformer using Shifted Windows)",
+      "domain": "计算机视觉骨干网络架构",
+      "mode": "direct",
+      "assumed_disclosure": "unpublished",
       "input": "inputs/2103.14030.pdf",
+      "source_txt": "inputs/2103.14030.txt",
       "prompt": "这是我们的论文，假设尚未以任何形式公开。请生成完整的专利申请文件（含附图）。",
-      "focus": ["模型结构的充分公开（模块、层级、连接关系）", "技术效果数值与论文一致", "参数是否只在必要时写入权利要求"]
+      "focus": [
+        "模型结构的充分公开（图像分块Patch Partition、线性嵌入、层级式Patch Merging下采样、连续Swin Transformer模块中的常规窗口W-MSA与移位窗口SW-MSA交替连接关系）",
+        "独立权利要求概括与参数分拣（窗口尺寸M=7、通道数C=96、各阶段层数比例2:2:6:2等具体超参数不下沉进权利要求1）",
+        "从属权利要求机制拆分（块合并层级降采样、循环移位Cyclic Shift与掩码自注意力批量计算、相对位置偏置Relative Position Bias各自成项）",
+        "技术效果数值与论文严格一致（ImageNet-1K分类准确率、COCO目标检测box/mask AP、ADE20K语义分割mIoU及FLOPs/参数量对比）"
+      ],
+      "must_have": [
+        "权利要求1准确界定层级特征构建与连续模块间规则划分窗口自注意力及移位窗口自注意力的交替计算机制",
+        "循环移位（cyclic shift）结合注意力掩码（attention mask）保持窗口数量不变的高效批处理机制作为独立从属权利要求",
+        "相对位置偏置矩阵 B 的索引与加权计算公式在从属权利要求或具体实施方式中完整公开并定义全部符号",
+        "说明书附图至少包含整体层级架构图、连续两个模块（W-MSA与SW-MSA）连接结构图及移位窗口循环移位/掩码示意图"
+      ],
+      "must_not_have": [
+        "将 M=7、C=96、查询维度 d=32 或层数 [2, 2, 6, 2] 写入独立权利要求1",
+        "在发明名称或权利要求中保留英文模型品牌名“Swin”或“Swin-T/S/B/L”",
+        "编造论文未报告的数据集指标或夸大为“在所有视觉任务上均达到100%最优”"
+      ],
+      "structural_assertions": {
+        "require_loop_in_drawings": false,
+        "claim1_forbidden_terms": ["Swin", "M=7", "C=96"]
+      }
     },
     {
       "id": "audio-generation",
-      "paper": "arXiv:2301.12503 (AudioLDM)",
+      "paper": "arXiv:2301.12503 (AudioLDM: Text-to-Audio Generation with Latent Diffusion Models)",
+      "domain": "跨模态音频生成与潜在扩散模型",
+      "mode": "direct",
+      "assumed_disclosure": "unpublished",
       "input": "inputs/2301.12503.pdf",
+      "source_txt": "inputs/2301.12503.txt",
       "prompt": "这是我们的论文，假设尚未以任何形式公开。请写成中国发明专利申请文件，要 Word 和 PDF。",
-      "focus": ["训练与推理流程的充分公开", "上位概括的分支支撑", "证据边界与措辞强度"]
+      "focus": [
+        "训练与推理非对称流程的充分公开（训练阶段仅用音频嵌入训练潜在扩散模型、推理阶段用文本嵌入作为条件引导，解决配对文本-音频数据稀缺问题）",
+        "多组件协同关系的清楚记载（梅尔频谱提取、变分自编码器VAE压缩、CLAP跨模态对齐嵌入空间、潜在扩散模型LDM去噪、声码器波形重建）",
+        "上位概括的分支支撑（推理阶段与训练阶段独立或联合保护、无分类器引导Classifier-Free Guidance与风格迁移/音频修复扩展分支的实施例支撑）",
+        "证据边界与措辞强度（保留论文关于数据集分布、采样步数与评估指标FD/IS/KL的客观边界）"
+      ],
+      "must_have": [
+        "清晰区分并公开训练阶段（利用音频样本及其CLAP音频分支嵌入进行自监督/仅音频条件去噪训练）与推理阶段（输入文本经CLAP文本分支嵌入引导潜在特征去噪生成）的技术机制",
+        "具体实施方式写明VAE潜空间压缩、交叉注意力/FiLM条件注入方式、无分类器引导（CFG）公式及声码器还原步骤",
+        "技术效果严格对应论文在AudioCaps与MusicCaps上的FD、IS、KL等实测指标"
+      ],
+      "must_not_have": [
+        "混淆训练阶段与推理阶段的条件输入（误写成训练阶段必须依赖大规模文本-音频配对数据训练LDM主干）",
+        "在权利要求中保留“AudioLDM”、“CLAP”、“HiFi-GAN”等专有模型缩写而不给出中文技术功能定义"
+      ],
+      "structural_assertions": {
+        "require_loop_in_drawings": false,
+        "claim1_forbidden_terms": ["AudioLDM", "HiFi-GAN"]
+      }
     },
     {
       "id": "systems-efficiency",
-      "paper": "arXiv:2205.14135 (FlashAttention)",
+      "paper": "arXiv:2205.14135 (FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness)",
+      "domain": "深度学习系统与硬件感知算子优化",
+      "mode": "direct",
+      "assumed_disclosure": "unpublished",
       "input": "inputs/2205.14135.pdf",
+      "source_txt": "inputs/2205.14135.txt",
       "prompt": "这是我们的论文，假设尚未以任何形式公开。请生成完整的专利申请文件（含附图）。",
-      "focus": ["技术性：与计算机内部结构（显存层级、IO）的关联", "算法步骤与硬件效果的对应"]
+      "focus": [
+        "《专利法》第25条技术属性构建：算法步骤与计算机内部存储层级（高带宽显存HBM与片上高速缓存SRAM）及IO访存开销减少的紧密耦合",
+        "核心机制的准确界定：分块加载（Tiling）、基于最大值与归一化因子动态更新的在线Softmax重缩放（Online Softmax Rescaling）、不将N×N中间注意力矩阵写回HBM",
+        "从属权利要求防线：反向传播阶段通过保存输出与统计量在SRAM中重计算（Recomputation）注意力矩阵以避免HBM读写、块稀疏（Block-Sparse）扩展",
+        "算法步骤与硬件性能技术效果（HBM访存复杂度、端到端训练加速比、显存占用下降比例）的因果对应"
+      ],
+      "must_have": [
+        "权利要求1明确记载高带宽主存（HBM/第一存储器）与片上高速缓存（SRAM/第二存储器）之间的数据分块传输、片上增量递推更新统计量（行最大值与指数和）及避免中间注意力矩阵落盘写回主存的特征",
+        "反向传播重计算（Recomputation）机制作为独立从属权利要求，写明利用前向保存的统计量在片上重算注意力权重并求导",
+        "说明书具体实施方式完整给出分块递推公式（局部最大值更新、指数缩放修正、分子分母增量累加）及符号定义"
+      ],
+      "must_not_have": [
+        "脱离多级存储器结构（HBM与SRAM），将权利要求1写成纯数学矩阵分块乘法公式而丧失计算机系统内部性能改进的技术属性",
+        "在权利要求1中限定特定GPU型号（如A100、RTX 3090）或固定SRAM字节大小"
+      ],
+      "structural_assertions": {
+        "require_loop_in_drawings": true,
+        "claim1_forbidden_terms": ["FlashAttention", "A100"]
+      }
     },
     {
       "id": "forecasting-subject-matter",
-      "paper": "arXiv:1912.09363 (Temporal Fusion Transformers)",
+      "paper": "arXiv:1912.09363 (Temporal Fusion Transformers for Interpretable Multi-horizon Time Series Forecasting)",
+      "domain": "多步时间序列预测与可解释性深度学习",
+      "mode": "direct",
+      "assumed_disclosure": "published_check_required",
       "input": "inputs/1912.09363.pdf",
+      "source_txt": "inputs/1912.09363.txt",
       "prompt": "这是我们的论文，帮我写成专利申请文件。",
-      "focus": ["客体风险提示（金融/零售预测受经济规律支配）", "公开状态判断（论文已公开时应明确提示新颖性风险）"]
+      "focus": [
+        "公开状态主动核查与新颖性风险预警（提示词未声明未公开，论文早于2019年已在arXiv公开并发表，必须明确指出已构成现有技术且超出6个月宽限期，仅靠论文已公开内容极可能丧失新颖性）",
+        "《专利法》第25条客体适格性风险管控（论文包含零售销量、金融波动率预测等受经济/商业规律支配的场景，需预警智力活动规则驳回风险，并依托论文已披露的电力负荷、交通流占用率等具象工程物理信号场景构建技术方案）",
+        "多类输入特征与模块公开（静态协变量编码、已知未来输入与历史观测输入的变量选择网络VSN、门控残差网络GRN、可解释多头注意力与分位数区间预测）"
+      ],
+      "must_have": [
+        "在《撰写说明》的公开状态/风险部分及向用户的交付消息（final_message.md）中，明确指出该论文早已公开发表（arXiv:1912.09363），构成《专利法》第22条意义上的现有技术且不适用第24条宽限期，建议结合未公开的技术改进点申请",
+        "在《撰写说明》的可专利性/风险分析中，明确提示单纯针对金融波动率或零售商品销量的预测受经济规律支配，存在《专利法》第25条第1款第2项（智力活动的规则和方法）客体驳回风险",
+        "权利要求与说明书依托论文披露的工程物理信号场景（如电网电力负荷预测、道路交通占用率监测）或明确具备物理/工程技术含义的传感器时序信号进行技术化撰写，不捏造论文未提及的外部工业场景"
+      ],
+      "must_not_have": [
+        "对论文已公开多年的事实视而不见，未在交付消息与撰写说明中给出新颖性丧失预警",
+        "将权利要求1的主题或核心限定直接写成“一种金融资产波动率预测方法”或“一种零售商品促销销量预测方法”而触发《专利法》第25条客体驳回",
+        "编造论文中根本不存在的医疗诊断或航天控制等应用场景来强行规避客体问题"
+      ],
+      "structural_assertions": {
+        "require_loop_in_drawings": false,
+        "notes_must_contain_any": ["现有技术", "新颖性", "已公开"],
+        "notes_risk_must_contain_any": ["第25条", "第二十五条", "智力活动", "经济规律", "客体"],
+        "final_message_must_contain_any": ["公开", "新颖性", "现有技术"]
+      }
+    }
+  ],
+  "mode_evals": [
+    {
+      "id": "mode-human-in-loop",
+      "paper": "arXiv:2308.00352 (MetaGPT)",
+      "mode": "human-in-loop",
+      "input": "inputs/2308.00352.pdf",
+      "prompt": "这是我们的论文，先不要直接生成全文Word，先帮我梳理公开状态、核心发明点和权利要求布局规划，等我确认后再写。",
+      "focus": [
+        "严格遵循 human-in-loop 模式：在未获用户确认前不提前生成 DOCX/PDF 最终文件",
+        "输出结构化的公开状态核查、最接近现有技术、区别技术特征—技术问题—技术效果链条",
+        "给出权利要求1特征分拣表（必要特征 A / 实施例选择 B / 接口细节 C）及从属权利要求树规划，并向用户提出明确的确认问题"
+      ]
+    },
+    {
+      "id": "mode-claims-only",
+      "paper": "arXiv:2103.14030 (Swin Transformer)",
+      "mode": "claims-only",
+      "input": "inputs/2103.14030.pdf",
+      "prompt": "假设这篇论文尚未公开，请只帮我起草权利要求书和权利要求布局说明，不需要写说明书全文。",
+      "focus": [
+        "严格遵循 claims-only 模式：输出权利要求布局规划（claim_plan）、权利要求—论文出处映射（support_map）及完整权利要求书",
+        "生成的仅含权利要求的 JSON 通过 check_patent_draft.py 权利要求项检查（0 个 C 类 ERROR，无 C20–C25 范围警告）",
+        "包含方法独立权利要求1、分层次的方法从属权利要求，以及对应的装置、电子设备、存储介质独立权利要求"
+      ]
+    },
+    {
+      "id": "mode-review-audit",
+      "paper": "arXiv:2205.14135 (FlashAttention)",
+      "mode": "review",
+      "input": "inputs/2205.14135.pdf",
+      "prompt": "请根据源论文审查我们现有的专利草稿 JSON，逐条核对权利要求是否忠实原文、保护范围是否过窄，以及是否存在形式缺陷。",
+      "focus": [
+        "严格遵循 review 模式：先运行 check_patent_draft.py 获取机械检查结果，再对照 quality-checklist.md 逐项审计",
+        "精准识别草稿中被篡改/捏造的实验数值、脱离论文依据的过度概括或将非必要参数写入权利要求1的问题",
+        "输出可直接指导修改的逐项问题清单（含位置、问题类型、论文原文依据及具体修改建议）"
+      ]
     }
   ]
 }
