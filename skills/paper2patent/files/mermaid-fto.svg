@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 969.5530833333332 1007.1519999999999" width="969.5530833333332" height="1007.1519999999999" style="--bg:#18181B;--fg:#F4F4F5;--line:#71717A;--muted:#A1A1AA;--surface:#27272A;--border:#3F3F46;background:var(--bg)">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap');
+  text { font-family: 'Inter', system-ui, sans-serif; }
+  svg {
+    /* Derived from --bg and --fg (overridable via --line, --accent, etc.) */
+    --_text:          var(--fg);
+    --_text-sec:      var(--muted, color-mix(in srgb, var(--fg) 60%, var(--bg)));
+    --_text-muted:    var(--muted, color-mix(in srgb, var(--fg) 40%, var(--bg)));
+    --_text-faint:    color-mix(in srgb, var(--fg) 25%, var(--bg));
+    --_line:          var(--line, color-mix(in srgb, var(--fg) 50%, var(--bg)));
+    --_arrow:         var(--accent, color-mix(in srgb, var(--fg) 85%, var(--bg)));
+    --_node-fill:     var(--surface, color-mix(in srgb, var(--fg) 3%, var(--bg)));
+    --_node-stroke:   var(--border, color-mix(in srgb, var(--fg) 20%, var(--bg)));
+    --_group-fill:    var(--bg);
+    --_group-hdr:     color-mix(in srgb, var(--fg) 5%, var(--bg));
+    --_inner-stroke:  color-mix(in srgb, var(--fg) 12%, var(--bg));
+    --_key-badge:     color-mix(in srgb, var(--fg) 10%, var(--bg));
+  }
+</style>
+<defs>
+  <marker id="arrowhead" markerWidth="8" markerHeight="5" refX="7" refY="2.5" orient="auto">
+    <polygon points="0 0, 8 2.5, 0 5" fill="var(--_arrow)" stroke="var(--_arrow)" stroke-width="0.75" stroke-linejoin="round" />
+  </marker>
+  <marker id="arrowhead-start" markerWidth="8" markerHeight="5" refX="1" refY="2.5" orient="auto-start-reverse">
+    <polygon points="8 0, 0 2.5, 8 5" fill="var(--_arrow)" stroke="var(--_arrow)" stroke-width="0.75" stroke-linejoin="round" />
+  </marker>
+</defs>
+<polyline class="edge" data-from="A" data-to="B" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="231.554375,76.9 231.554375,124.9" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="B" data-to="B1" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="撞库冲突严重" points="150.486625,178.70000000000002 150.486625,214.70000000000002 140.68033333333335,214.70000000000002 140.68033333333335,295" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="B1" data-to="B" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="241.36066666666667,295 241.36066666666667,283 231.554375,283 231.554375,178.70000000000002" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="B" data-to="C" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="通过初筛" points="312.622125,178.70000000000002 312.622125,214.70000000000002 484.7525,214.70000000000002 484.7525,295" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="C" data-to="D" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="484.7525,331.90000000000003 484.7525,379.90000000000003" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="D" data-to="D1" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="断言失败 (FAIL)" points="407.575,433.70000000000005 407.575,663.2520000000001 351.2843333333334,663.2520000000001 351.2843333333334,731.552 343.5811666666667,731.552 343.5811666666667,743.552" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="D1" data-to="D" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="413.13950000000006,743.552 413.13950000000006,731.552 416.94908333333336,731.552 416.94908333333336,731.552 484.7525,731.552 484.7525,433.70000000000005" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="D" data-to="E" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="PASS" points="561.93,433.70000000000005 561.93,469.70000000000005 625.9238333333333,469.70000000000005 625.9238333333334,550" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="E" data-to="F" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="625.9238333333334,780.452 625.9238333333334,804.452 464.05258333333336,804.452 464.05258333333336,828.452" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="E" data-to="G" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="625.9238333333334,780.452 625.9238333333334,804.452 787.7950833333334,804.452 787.7950833333334,828.452" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="F" data-to="H" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="464.05258333333336,882.252 464.05258333333336,906.252 625.9238333333334,906.252 625.9238333333334,930.252" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="G" data-to="H" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="787.7950833333334,882.252 787.7950833333334,906.252 625.9238333333334,906.252 625.9238333333334,930.252" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<g class="edge-label" data-from="B" data-to="B1" data-label="撞库冲突严重">
+  <rect x="96.18033333333335" y="221.70000000000002" width="88.93" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="140.64533333333335" y="236.85000000000002" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">撞库冲突严重</text>
+</g>
+<g class="edge-label" data-from="B" data-to="C" data-label="通过初筛">
+  <rect x="451.7525" y="221.70000000000002" width="65.17" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="484.3375" y="236.85000000000002" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">通过初筛</text>
+</g>
+<g class="edge-label" data-from="D" data-to="D1" data-label="断言失败 (FAIL)">
+  <rect x="302.7843333333334" y="670.2520000000001" width="96.652" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="351.1103333333334" y="685.402" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">断言失败 (FAIL)</text>
+</g>
+<g class="edge-label" data-from="D" data-to="E" data-label="PASS">
+  <rect x="602.4238333333333" y="476.70000000000005" width="46.162" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="625.5048333333333" y="491.85" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">PASS</text>
+</g>
+<g class="node" data-id="A" data-label="论文 / Idea 输入" data-shape="rectangle">
+  <rect x="163.155375" y="40" width="136.798" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="231.554375" y="58.45" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">论文 / Idea 输入</text>
+</g>
+<g class="node" data-id="B" data-label="【Stage 1 串行前置】Idea / 核心特征轻量撞库
+（MCP 查新与粗筛碰撞）" data-shape="rectangle">
+  <rect x="69.41887500000001" y="124.9" width="324.27099999999996" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="231.554375" y="151.8" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="231.554375" dy="-3.9000000000000012">【Stage 1 串行前置】Idea / 核心特征轻量撞库</tspan><tspan x="231.554375" dy="16.900000000000002">（MCP 查新与粗筛碰撞）</tspan></text>
+</g>
+<g class="node" data-id="B1" data-label="调整技术方案 / 提取次选发明点（退守）" data-shape="rectangle">
+  <rect x="40" y="295" width="302.041" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="191.0205" y="313.45" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">调整技术方案 / 提取次选发明点（退守）</text>
+</g>
+<g class="node" data-id="C" data-label="起草完整专利申请文件 (草稿)" data-shape="rectangle">
+  <rect x="370.041" y="295" width="229.423" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="484.7525" y="313.45" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">起草完整专利申请文件 (草稿)</text>
+</g>
+<g class="node" data-id="D" data-label="【Stage 2 串行门禁】Eval L1 静态结构断言
+(grade_structure.py 秒级确定性检查)" data-shape="rectangle">
+  <rect x="330.39750000000004" y="379.90000000000003" width="308.71" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="484.75250000000005" y="406.8" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="484.75250000000005" dy="-3.9000000000000012">【Stage 2 串行门禁】Eval L1 静态结构断言</tspan><tspan x="484.75250000000005" dy="16.900000000000002">(grade_structure.py 秒级确定性检查)</tspan></text>
+</g>
+<g class="node" data-id="D1" data-label="针对性修复格式/引用缺陷" data-shape="rectangle">
+  <rect x="274.0228333333334" y="743.552" width="208.67499999999998" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="378.36033333333336" y="762.0020000000001" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">针对性修复格式/引用缺陷</text>
+</g>
+<g class="node" data-id="E" data-label="【Stage 3 真正解耦并行】" data-shape="diamond">
+  <polygon points="625.9238333333334,550 741.1498333333334,665.226 625.9238333333334,780.452 510.6978333333334,665.226" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="625.9238333333334" y="665.226" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">【Stage 3 真正解耦并行】</text>
+</g>
+<g class="node" data-id="F" data-label="分支 A：Eval L2 语义质检
+(LLM-as-a-Judge 盲评/充分公开/客体审查)" data-shape="rectangle">
+  <rect x="310.0680833333334" y="828.452" width="307.96899999999994" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="464.05258333333336" y="855.352" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="464.05258333333336" dy="-3.9000000000000012">分支 A：Eval L2 语义质检</tspan><tspan x="464.05258333333336" dy="16.900000000000002">(LLM-as-a-Judge 盲评/充分公开/客体审查)</tspan></text>
+</g>
+<g class="node" data-id="G" data-label="分支 B：深度 FTO 撞库排查
+(权利要求要素拆解 + 专利库全量比对)" data-shape="rectangle">
+  <rect x="646.0370833333334" y="828.452" width="283.51599999999996" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="787.7950833333334" y="855.352" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="787.7950833333334" dy="-3.9000000000000012">分支 B：深度 FTO 撞库排查</tspan><tspan x="787.7950833333334" dy="16.900000000000002">(权利要求要素拆解 + 专利库全量比对)</tspan></text>
+</g>
+<g class="node" data-id="H" data-label="【Stage 4 汇聚收敛】生成质检大盘与交底书撰写说明" data-shape="rectangle">
+  <rect x="433.7778333333334" y="930.252" width="384.292" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="625.9238333333334" y="948.702" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">【Stage 4 汇聚收敛】生成质检大盘与交底书撰写说明</text>
+</g>
+</svg>
