@@ -4,7 +4,12 @@ plan/
 reference_skills/
 user.md
 Agent.md
-.gitignore
+AGENTS.md
+paper2patent/files/
+skills/paper2patent/files/
+skills/paper2patent/fto/mcp.local.json
+**/mcp.local.json
+
 
 
 # Generated outputs and temporary files
