@@ -1,5 +1,13 @@
 # 更新记录
 
+## v0.0.3 (2026-11-08) · 规范极简最终输出（路由通道 + 交付产物）与无专利数据库明确报告
+
+- **规范极简最终输出（`SKILL.md` 步骤 7）**：
+  - 规定向用户交付时的最终回复只输出最精炼的三要素：**路由通道**（明确标注 `direct` 或 `human-in-loop` / `text-only` / `claims-only` / `review` / `fto-only`）、**交付产物清单**（DOCX/PDF、撰写说明、FTO 报告/离线特征表）与**一句话核心摘要及合规提醒**，不再堆砌冗余的中间分析或长表格。
+- **无智慧芽 MCP 密钥时明确报告“没有专利数据库”（`SKILL.md` 步骤 8、`fto-workflow.md`、`fto_patent_check.py`）**：
+  - 当检测到未配置智慧芽 MCP 密钥（`database_available: false`）时，强制要求明确向用户报告**“当前没有接入专利数据库（未配置智慧芽 PatSnap MCP 密钥），无法执行在线 FTO 撞库排查”**，严禁静默跳过或利用大模型记忆虚构专利号，仅输出离线特征拆解并引导用户提供密钥。
+- **版本号升级至 `0.0.3`**：同步更新 `VERSION`、`skills/paper2patent/VERSION`、`SKILL.md`、`README.md` 与 CLI `--version`。
+
 ## v0.0.2 (2026-11-08) · 主 Skill 增加智慧芽 MCP 密钥引导与安全写入支持
 
 - **主技能（`SKILL.md`）增加密钥检测与交互引导**：

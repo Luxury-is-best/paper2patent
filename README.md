@@ -6,7 +6,7 @@
 
 *Make AI Writing Better for Everyone*
 
-[![Version: 0.0.2](https://img.shields.io/badge/Version-0.0.2-blue.svg)](CHANGELOG.md) [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Version: 0.0.3](https://img.shields.io/badge/Version-0.0.3-blue.svg)](CHANGELOG.md) [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 [快速开始](#快速开始) · [本仓库改进](#本仓库改进说明fork-演进) · [paper2patent Skill](#paper2patent-skill) · [FTO 撞库排查](#第八步fto-撞库排查智慧芽-mcp) · [Prompt 模板](#prompt-模板) · [使用须知](#使用须知) · [更新记录](CHANGELOG.md)
 
@@ -88,13 +88,13 @@ zip -r paper2patent.zip paper2patent \
   -x 'paper2patent/evals/inputs/*' 'paper2patent/evals/runs/*' 'paper2patent/files/*' 'paper2patent/fto/mcp.local.json' '*/__pycache__/*' '*.pyc'
 ```
 
-**版本与升级**（当前版本：`0.0.2`，记录于 `VERSION` 与 `skills/paper2patent/VERSION`）：升级时可先对比本地已安装目录中的 `VERSION` 版本号（或运行 `python skills/paper2patent/fto/fto_patent_check.py --version`），拉取最新代码或指定版本 Tag 后，**先删除旧目录再复制**，避免已删除的旧文件残留：
+**版本与升级**（当前版本：`0.0.3`，记录于 `VERSION` 与 `skills/paper2patent/VERSION`）：升级时可先对比本地已安装目录中的 `VERSION` 版本号（或运行 `python skills/paper2patent/fto/fto_patent_check.py --version`），拉取最新代码或指定版本 Tag 后，**先删除旧目录再复制**，避免已删除的旧文件残留：
 
 ```bash
 # 查看当前已安装 Skill 版本
 cat ~/.codex/skills/paper2patent/VERSION
 
-# 拉取更新（或切换到指定版本标签：git checkout v0.0.2）并重新安装
+# 拉取更新（或切换到指定版本标签：git checkout v0.0.3）并重新安装
 git pull
 rm -rf ~/.codex/skills/paper2patent && cp -R skills/paper2patent ~/.codex/skills/
 ```
@@ -112,10 +112,14 @@ rm -rf ~/.codex/skills/paper2patent && cp -R skills/paper2patent ~/.codex/skills
 
 ### 输出
 
-- `<名称>_专利申请文件.docx / .pdf`：只含五部分申请文本，每部分另起一页，附图下只标“图N”。
-- `<名称>_专利申请文件_撰写说明.docx`：供申请人和代理师审核，包括待补充材料清单、充分公开核查、公开与新颖性风险、权利要求布局与论文出处对照、附图来源、自动检查结果。
-- `<名称>_FTO撞库排查报告.md / .docx`：基于智慧芽（PatSnap）专利数据库检索与独立权利要求逐项比对（Claim Chart）生成的防侵权排查报告，含今日额度消耗统计、检索日志、有效/审中/失效专利分级、特征比对表及规避设计建议（Design-Around）。
-- 各附图的 SVG 和 PNG 文件。
+Skill 的最终回复采用**极简输出规范（路由通道 + 交付产物清单 + 一句话核心摘要与提醒）**：
+
+- **路由通道**：明确标示本次执行的路由通道（`direct` 默认全流程通道，或 `human-in-loop` / `text-only` / `claims-only` / `review` / `fto-only`）。
+- **交付产物**：
+  - `<名称>_专利申请文件.docx / .pdf`：只含五部分申请文本，每部分另起一页，附图下只标“图N”。
+  - `<名称>_专利申请文件_撰写说明.docx`：供申请人和代理师审核，包括待补充材料清单、充分公开核查、公开与新颖性风险、权利要求布局与论文出处对照、附图来源、自动检查结果。
+  - `<名称>_FTO撞库排查报告.md / .docx`：基于智慧芽（PatSnap）专利数据库检索与独立权利要求逐项比对（Claim Chart）生成的防侵权排查报告（**注：若未配置智慧芽 MCP 密钥，Skill 会明确向用户报告“当前没有专利数据库”，仅输出离线特征拆解表 `fto_features.json` 并引导配置密钥**）。
+  - 各附图的 SVG 和 PNG 文件。
 
 运行环境：Python 3.9+；画附图需要 Pillow 和一种中文字体（Windows/macOS 自带字体或 Noto CJK 均可，也可以用环境变量 `PATENT_CJK_FONT` 指定）；导出 PDF 需要 LibreOffice；执行第八步 FTO 撞库排查需网络可访问 `fto/mcp.json` 中配置的智慧芽 MCP 服务端点。
 
@@ -148,8 +152,8 @@ python skills/paper2patent/fto/fto_patent_check.py report out/fto_analysis.json 
 <summary><b>目录结构</b></summary>
 
 ```text
-skills/paper2patent/                 可独立打包和分发的完整 Skill（v0.0.2）
-├── VERSION                          Skill 版本号文件（当前：0.0.2）
+skills/paper2patent/                 可独立打包和分发的完整 Skill（v0.0.3）
+├── VERSION                          Skill 版本号文件（当前：0.0.3）
 ├── SKILL.md                         八步完整工作流与核心规则（中文规范版）
 ├── agents/
 │   └── openai.yaml                  Agent 默认提示词与元数据配置

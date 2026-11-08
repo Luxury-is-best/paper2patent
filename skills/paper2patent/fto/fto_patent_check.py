@@ -174,8 +174,8 @@ class PatSnapMCPClient:
         auth_val = self.headers.get("Authorization", "")
         if "<YOUR_PATENT_MCP_TOKEN>" in auth_val:
             raise RuntimeError(
-                "PatSnap MCP token not configured. Set PATENT_MCP_TOKEN environment variable "
-                "or create skills/paper2patent/fto/mcp.local.json with your Bearer token."
+                "NO_PATENT_DATABASE: 当前没有接入专利数据库（未配置智慧芽 PatSnap MCP 密钥），无法执行在线 FTO 撞库检索。"
+                "请向用户报告当前没有专利数据库，并引导用户提供智慧芽 MCP Token（运行 set-token 保存至 fto/mcp.local.json 或设置 PATENT_MCP_TOKEN）。"
             )
         self.session_id: str | None = None
         self._req_id = 0
@@ -725,6 +725,7 @@ def inspect_mcp_auth(mcp_config_path: Path = DEFAULT_MCP_CONFIG, server_name: st
     if env_token and "<YOUR_PATENT_MCP_TOKEN>" not in env_token:
         return {
             "configured": True,
+            "database_available": True,
             "source": "env:PATENT_MCP_TOKEN",
             "masked_token": _mask_token(env_token),
         }
@@ -745,6 +746,7 @@ def inspect_mcp_auth(mcp_config_path: Path = DEFAULT_MCP_CONFIG, server_name: st
             if masked:
                 return {
                     "configured": True,
+                    "database_available": True,
                     "source": label,
                     "masked_token": masked,
                 }
@@ -753,10 +755,12 @@ def inspect_mcp_auth(mcp_config_path: Path = DEFAULT_MCP_CONFIG, server_name: st
 
     return {
         "configured": False,
+        "database_available": False,
         "source": "unconfigured",
         "masked_token": None,
         "guidance": (
-            "未检测到智慧芽 (PatSnap) MCP 密钥。请引导用户提供智慧芽 MCP Token（如 pp_...），"
+            "当前没有接入专利数据库（未检测到智慧芽 PatSnap MCP 密钥），无法执行在线 FTO 撞库排查。"
+            "必须明确向用户报告【当前没有专利数据库】，引导用户提供智慧芽 MCP Token（如 pp_...），"
             "并运行 `python <skill>/fto/fto_patent_check.py set-token <TOKEN>` 保存至本地隔离文件 fto/mcp.local.json，"
             "或设置环境变量 PATENT_MCP_TOKEN。"
         ),
