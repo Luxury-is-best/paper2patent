@@ -1,5 +1,28 @@
 # 更新记录
 
+## v0.0.2 (2026-11-08) · 主 Skill 增加智慧芽 MCP 密钥引导与安全写入支持
+
+- **主技能（`SKILL.md`）增加密钥检测与交互引导**：
+  - 在「步骤 1：需求与输入接入」与「步骤 8：FTO 撞库排查」中新增智慧芽 MCP 密钥核查与用户引导机制：未配置密钥时不阻塞步骤 1–6 专利申请书（DOCX/PDF）与《撰写说明》的生成，进入步骤 8 时主动引导用户提供智慧芽 MCP Token。
+  - 明确安全准则：严禁将明文密钥写入受 Git 追踪的 `fto/mcp.json`。
+- **`fto/fto_patent_check.py` 新增密钥状态诊断与 `set-token` 子命令**：
+  - `quota` 子命令同步返回 `mcp_auth` 状态（检测 `PATENT_MCP_TOKEN` 环境变量或本地 `fto/mcp.local.json`，并对已配置密钥脱敏展示）。
+  - 新增 `set-token <TOKEN>` 子命令，支持将用户提供的智慧芽 MCP 密钥一键安全写入 `.gitignore` 忽略的 `skills/paper2patent/fto/mcp.local.json`。
+- **版本号升级至 `0.0.2`**：同步更新 `VERSION`、`skills/paper2patent/VERSION`、`SKILL.md`、`README.md` 与 CLI `--version` 输出。
+
+## v0.0.1 (2026-11-08) · 初始版本发布（FTO 撞库排查 + Evals v2.0 + 汉化闭环）
+
+本次发布为 Fork 维护仓库（`Luxury-is-best/paper2patent`）的首个正式版本号 `0.0.1`（基于原作者 `7toCR` 仓库扩展）：
+
+- **版本管理体系初始化（`0.0.1`）**：新增仓库根目录 `VERSION` 与 `skills/paper2patent/VERSION`，在 `SKILL.md` Frontmatter、`scripts/patent_common.py` 及 `fto/fto_patent_check.py --version` 中统一接入版本号 `0.0.1`。
+- **新增第八步：FTO 自由实施（防侵权撞库）排查（`skills/paper2patent/fto/`）**：
+  - 在输出完专利申请文件 DOCX/PDF 后，基于 `patent.json` 的独立权利要求 1 与核心实施方式接入智慧芽（PatSnap）专利数据库 MCP 执行防侵权撞库排查。
+  - 内置零依赖 MCP 客户端与本地每日 ≤100 篇唯一专利额度管控（`fto_patent_check.py`），支持 `PATENT_MCP_TOKEN` 环境变量与本地 `mcp.local.json` 密钥隔离。
+  - 依据全面覆盖原则与等同原则执行独立权利要求逐项特征比对（Claim Chart），输出 `<名称>_FTO撞库排查报告.md / .docx` 及规避设计（Design-Around）建议。
+- **全面汉化 `SKILL.md` 并升级 Evals 评测体系至 v2.0**：
+  - 将 `SKILL.md` 全面转化为规范中文表述并升级为八步闭环工作流。
+  - `evals/` 升级为 5 篇核心论文 + 3 类专项工作流模式（`evals.json`）、9 维 1–5 分评分量表与双向盲评模板（`rubric.md`）、13 项自动化结构与数值溯源门禁（`grade_structure.py`）。
+
 ## 2026-10-27 · 仓库精简与单包分发（Fork 后修改）
 
 本次修改基于原作者 `7toCR` 的仓库，由 Fork 维护者完成。

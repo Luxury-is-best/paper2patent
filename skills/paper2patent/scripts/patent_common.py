@@ -17,6 +17,9 @@ import sys
 from pathlib import Path
 from typing import Any
 
+_VERSION_FILE = Path(__file__).resolve().parent.parent / "VERSION"
+SKILL_VERSION = _VERSION_FILE.read_text(encoding="utf-8").strip() if _VERSION_FILE.exists() else "0.0.2"
+
 FIGURE_NO_RE = re.compile(r"图\s*(\d+)")
 STEP_ID_RE = re.compile(r"S\d{2,4}")
 

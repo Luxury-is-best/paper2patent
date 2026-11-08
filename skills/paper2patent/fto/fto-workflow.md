@@ -11,9 +11,10 @@
 
 ### 1.1 MCP 服务配置（`fto/mcp.json` 与本地密钥隔离）
 本技能在 `fto/mcp.json` 中内置了智慧芽专利平台 MCP 服务配置模板（`patent-platform`，端点 `https://patent.jiuan.com/mcp`）。为防止密钥泄露，仓库中的 `fto/mcp.json` 仅保留占位符 `<YOUR_PATENT_MCP_TOKEN>`：
-- **配置方式（二选一，均不入库）**：
-  1. 设置环境变量 `PATENT_MCP_TOKEN=<你的智慧芽MCP密钥>`；
-  2. 将 `fto/mcp.json` 复制为 `fto/mcp.local.json`（已被 `.gitignore` 忽略），填入真实 Bearer Token。
+- **配置方式（三选一，均不入库）**：
+  1. 在对话中提供密钥，由 Agent 执行 `python <skill>/fto/fto_patent_check.py set-token <你的智慧芽MCP密钥>` 自动写入本地 `fto/mcp.local.json`（已被 `.gitignore` 忽略）；
+  2. 设置环境变量 `PATENT_MCP_TOKEN=<你的智慧芽MCP密钥>`；
+  3. 手动将 `fto/mcp.json` 复制为 `fto/mcp.local.json` 并填入真实 Bearer Token。
 - 若宿主 Agent 环境已挂载 `patent-platform` MCP 工具（如 `search_patents`、`semantic_search_patents`、`get_claims`、`batch_prefetch_claims`、`get_legal_status`、`get_bibliography`），可直接调用或统一通过 `fto/fto_patent_check.py` 调用。
 - 若宿主环境未自动挂载 MCP，**`fto/fto_patent_check.py` 内置了零依赖的原生 HTTP/SSE MCP 客户端**，会自动优先读取 `fto/mcp.local.json` 或 `PATENT_MCP_TOKEN` 环境变量完成握手、检索、权利要求拉取与本地配额记账。
 
@@ -36,12 +37,15 @@
 
 在步骤 6 生成完 `<名称>_专利申请文件.docx` 和 `<名称>_专利申请文件.pdf` 后，按以下四步完成 FTO 撞库排查：
 
-### 步骤 8.1：检查今日额度并执行自动化检索与候选拉取
-运行 `fto/fto_patent_check.py` 的 `quota` 与 `auto-screen` 子命令（`<skill>` 为本技能根目录）：
+### 步骤 8.1：检查密钥状态与今日额度，并执行自动化检索与候选拉取
+运行 `fto/fto_patent_check.py` 的 `quota`（若未配置密钥则引导用户提供后运行 `set-token`）与 `auto-screen` 子命令（`<skill>` 为本技能根目录）：
 
 ```bash
-# 1. 查看今日智慧芽 MCP 剩余可用额度（上限 100 篇/日）
+# 1. 查看智慧芽 MCP 密钥配置状态与今日剩余可用额度（上限 100 篇/日）
 python <skill>/fto/fto_patent_check.py quota
+
+# （若 mcp_auth.configured 为 false，引导用户提供密钥后一键写入本地隔离文件 fto/mcp.local.json）
+python <skill>/fto/fto_patent_check.py set-token <YOUR_PATENT_MCP_TOKEN>
 
 # 2. 基于已生成的 patent.json 执行核心特征拆解、语义+布尔双路检索及 Top 候选专利权项拉取
 python <skill>/fto/fto_patent_check.py auto-screen patent.json \

@@ -42,7 +42,7 @@ DAILY_PATENT_LIMIT = 100
 DEFAULT_QUOTA_FILE = Path.home() / ".paper2patent_fto_quota.json"
 
 sys.path.insert(0, str(SKILL_DIR / "scripts"))
-from patent_common import as_paragraphs, claims_list, eprint, read_json, write_json  # noqa: E402
+from patent_common import SKILL_VERSION, as_paragraphs, claims_list, eprint, read_json, write_json  # noqa: E402
 from generate_patent_docx import ImageRegistry, para, table, write_package  # noqa: E402
 
 
@@ -227,7 +227,7 @@ class PatSnapMCPClient:
             "params": {
                 "protocolVersion": "2024-11-05",
                 "capabilities": {},
-                "clientInfo": {"name": "paper2patent-fto", "version": "1.0.0"},
+                "clientInfo": {"name": "paper2patent-fto", "version": SKILL_VERSION},
             },
         })
         if "error" in res:
@@ -710,13 +710,103 @@ def build_fto_docx(analysis: dict[str, Any], output_path: Path) -> None:
 # Subcommand Handlers
 # ---------------------------------------------------------------------------
 
+def _mask_token(raw_auth: str) -> str:
+    token = re.sub(r"^Bearer\s+", "", raw_auth.strip(), flags=re.I).strip()
+    if not token or "<YOUR_PATENT_MCP_TOKEN>" in token:
+        return ""
+    if len(token) <= 10:
+        return token[:3] + "***"
+    return f"{token[:7]}...{token[-4:]}"
+
+
+def inspect_mcp_auth(mcp_config_path: Path = DEFAULT_MCP_CONFIG, server_name: str = "patent-platform") -> dict[str, Any]:
+    """Check whether a valid PatSnap MCP token is configured without exposing the full secret."""
+    env_token = (os.environ.get("PATENT_MCP_TOKEN") or "").strip()
+    if env_token and "<YOUR_PATENT_MCP_TOKEN>" not in env_token:
+        return {
+            "configured": True,
+            "source": "env:PATENT_MCP_TOKEN",
+            "masked_token": _mask_token(env_token),
+        }
+
+    candidates = []
+    if mcp_config_path == DEFAULT_MCP_CONFIG and DEFAULT_LOCAL_MCP_CONFIG.exists():
+        candidates.append(("fto/mcp.local.json", DEFAULT_LOCAL_MCP_CONFIG))
+    candidates.append((str(mcp_config_path.name), mcp_config_path))
+
+    for label, path in candidates:
+        if not path.exists():
+            continue
+        try:
+            cfg = json.loads(path.read_text(encoding="utf-8"))
+            srv = (cfg.get("mcpServers") or {}).get(server_name) or {}
+            auth_val = str((srv.get("headers") or {}).get("Authorization") or "").strip()
+            masked = _mask_token(auth_val)
+            if masked:
+                return {
+                    "configured": True,
+                    "source": label,
+                    "masked_token": masked,
+                }
+        except (OSError, ValueError):
+            continue
+
+    return {
+        "configured": False,
+        "source": "unconfigured",
+        "masked_token": None,
+        "guidance": (
+            "未检测到智慧芽 (PatSnap) MCP 密钥。请引导用户提供智慧芽 MCP Token（如 pp_...），"
+            "并运行 `python <skill>/fto/fto_patent_check.py set-token <TOKEN>` 保存至本地隔离文件 fto/mcp.local.json，"
+            "或设置环境变量 PATENT_MCP_TOKEN。"
+        ),
+    }
+
+
 def cmd_quota(args: argparse.Namespace) -> int:
     tracker = DailyQuotaTracker(daily_limit=args.daily_limit)
     if args.reset:
         if tracker.quota_file.exists():
             tracker.quota_file.unlink()
         tracker = DailyQuotaTracker(daily_limit=args.daily_limit)
-    print(json.dumps(tracker.summary(), ensure_ascii=False, indent=2))
+    payload = tracker.summary()
+    payload["mcp_auth"] = inspect_mcp_auth(args.mcp_config)
+    print(json.dumps(payload, ensure_ascii=False, indent=2))
+    return 0
+
+
+def cmd_set_token(args: argparse.Namespace) -> int:
+    raw = str(args.token or "").strip()
+    token = re.sub(r"^Bearer\s+", "", raw, flags=re.I).strip()
+    if not token or "<YOUR_PATENT_MCP_TOKEN>" in token:
+        eprint("ERROR: 请提供有效的智慧芽 MCP Token（不能是空字符串或占位符）。")
+        return 1
+    base_cfg: dict[str, Any] = {
+        "mcpServers": {
+            "patent-platform": {
+                "type": "http",
+                "url": "https://patent.jiuan.com/mcp",
+                "headers": {},
+            }
+        }
+    }
+    if DEFAULT_MCP_CONFIG.exists():
+        try:
+            base_cfg = json.loads(DEFAULT_MCP_CONFIG.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            pass
+    servers = base_cfg.setdefault("mcpServers", {})
+    srv = servers.setdefault("patent-platform", {"type": "http", "url": "https://patent.jiuan.com/mcp"})
+    headers = srv.setdefault("headers", {})
+    headers["Authorization"] = f"Bearer {token}"
+    write_json(DEFAULT_LOCAL_MCP_CONFIG, base_cfg)
+    print(json.dumps({
+        "status": "ok",
+        "saved_to": str(DEFAULT_LOCAL_MCP_CONFIG),
+        "git_ignored": True,
+        "masked_token": _mask_token(token),
+        "message": "已将智慧芽 MCP 密钥安全保存至本地隔离文件 fto/mcp.local.json（不会随 Git 提交）。",
+    }, ensure_ascii=False, indent=2))
     return 0
 
 
@@ -1042,6 +1132,12 @@ def build_parser() -> argparse.ArgumentParser:
         description="Paper2Patent Step 8: FTO Patent Database Screening & Report Generator (<= 100 patents/day)."
     )
     parser.add_argument(
+        "-V",
+        "--version",
+        action="version",
+        version=f"paper2patent {SKILL_VERSION}",
+    )
+    parser.add_argument(
         "--mcp-config",
         type=Path,
         default=DEFAULT_MCP_CONFIG,
@@ -1056,9 +1152,14 @@ def build_parser() -> argparse.ArgumentParser:
     sub = parser.add_subparsers(dest="subcommand", required=True)
 
     # 1. quota
-    p_quota = sub.add_parser("quota", help="Show or reset today's PatSnap MCP patent quota usage.")
+    p_quota = sub.add_parser("quota", help="Show or reset today's PatSnap MCP patent quota usage and check token status.")
     p_quota.add_argument("--reset", action="store_true", help="Reset today's local quota counter.")
     p_quota.set_defaults(func=cmd_quota)
+
+    # 1b. set-token
+    p_token = sub.add_parser("set-token", help="Save user-provided PatSnap MCP Bearer token to gitignored fto/mcp.local.json.")
+    p_token.add_argument("token", help="PatSnap MCP Bearer token (e.g. pp_...).")
+    p_token.set_defaults(func=cmd_set_token)
 
     # 2. extract-features
     p_ext = sub.add_parser("extract-features", help="Decompose claim 1 features and build search queries from patent.json.")

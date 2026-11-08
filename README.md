@@ -6,7 +6,7 @@
 
 *Make AI Writing Better for Everyone*
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Version: 0.0.2](https://img.shields.io/badge/Version-0.0.2-blue.svg)](CHANGELOG.md) [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 [快速开始](#快速开始) · [本仓库改进](#本仓库改进说明fork-演进) · [paper2patent Skill](#paper2patent-skill) · [FTO 撞库排查](#第八步fto-撞库排查智慧芽-mcp) · [Prompt 模板](#prompt-模板) · [使用须知](#使用须知) · [更新记录](CHANGELOG.md)
 
@@ -88,9 +88,13 @@ zip -r paper2patent.zip paper2patent \
   -x 'paper2patent/evals/inputs/*' 'paper2patent/evals/runs/*' 'paper2patent/files/*' 'paper2patent/fto/mcp.local.json' '*/__pycache__/*' '*.pyc'
 ```
 
-**升级**：本仓库没有版本号，升级即 `git pull` 后重新复制。先删除旧目录再复制，避免已删除的旧文件残留：
+**版本与升级**（当前版本：`0.0.2`，记录于 `VERSION` 与 `skills/paper2patent/VERSION`）：升级时可先对比本地已安装目录中的 `VERSION` 版本号（或运行 `python skills/paper2patent/fto/fto_patent_check.py --version`），拉取最新代码或指定版本 Tag 后，**先删除旧目录再复制**，避免已删除的旧文件残留：
 
 ```bash
+# 查看当前已安装 Skill 版本
+cat ~/.codex/skills/paper2patent/VERSION
+
+# 拉取更新（或切换到指定版本标签：git checkout v0.0.2）并重新安装
 git pull
 rm -rf ~/.codex/skills/paper2patent && cp -R skills/paper2patent ~/.codex/skills/
 ```
@@ -117,14 +121,18 @@ rm -rf ~/.codex/skills/paper2patent && cp -R skills/paper2patent ~/.codex/skills
 
 ### 第八步：FTO 撞库排查（智慧芽 MCP）
 
-使用前请先配置智慧芽 MCP 密钥（任选其一，均不会被 Git 提交）：
-- 设置环境变量：`export PATENT_MCP_TOKEN="你的密钥"`（Windows PowerShell：`$env:PATENT_MCP_TOKEN="你的密钥"`）
-- 或将 `skills/paper2patent/fto/mcp.json` 复制为 `skills/paper2patent/fto/mcp.local.json`（已在 `.gitignore` 中忽略）并填入密钥。
+使用前需配置智慧芽 MCP 密钥（任选其一，均不会被 Git 提交；若未配置，Skill 也会在执行时主动引导你提供）：
+- **对话内引导配置（推荐）**：直接在对话中把智慧芽 MCP Token（如 `pp_...`）发给 Agent，或运行以下命令一键写入本地隔离文件 `skills/paper2patent/fto/mcp.local.json`（已被 `.gitignore` 忽略）：
+  ```bash
+  python skills/paper2patent/fto/fto_patent_check.py set-token <你的智慧芽MCP密钥>
+  ```
+- **环境变量配置**：设置 `export PATENT_MCP_TOKEN="你的密钥"`（Windows PowerShell：`$env:PATENT_MCP_TOKEN="你的密钥"`）。
+- **手动本地文件配置**：将 `skills/paper2patent/fto/mcp.json` 复制为 `skills/paper2patent/fto/mcp.local.json` 并填入密钥。
 
 在完成步骤 1–6 输出专利申请文件 DOCX/PDF 后，Skill 会基于已提炼的 `patent.json`（独立权利要求 1 及核心实施方式）继续执行第八步 FTO 撞库排查（详见 `skills/paper2patent/fto/fto-workflow.md`）：
 
 ```bash
-# 1. 检查今日智慧芽 MCP 剩余额度（硬性上限 100 篇/日）
+# 1. 检查智慧芽 MCP 密钥配置状态与今日剩余额度（硬性上限 100 篇/日）
 python skills/paper2patent/fto/fto_patent_check.py quota
 
 # 2. 从 patent.json 拆解核心技术特征，执行智慧芽语义+布尔双路检索并拉取 Top 候选专利权利要求与法律状态
@@ -140,7 +148,8 @@ python skills/paper2patent/fto/fto_patent_check.py report out/fto_analysis.json 
 <summary><b>目录结构</b></summary>
 
 ```text
-skills/paper2patent/                 可独立打包和分发的完整 Skill
+skills/paper2patent/                 可独立打包和分发的完整 Skill（v0.0.2）
+├── VERSION                          Skill 版本号文件（当前：0.0.2）
 ├── SKILL.md                         八步完整工作流与核心规则（中文规范版）
 ├── agents/
 │   └── openai.yaml                  Agent 默认提示词与元数据配置
