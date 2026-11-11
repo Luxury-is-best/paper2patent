@@ -2,7 +2,7 @@
 
 > 💡 **定位与使用说明**：
 > - 本文件收录了面向**普通网页端大模型聊天框**（如 DeepSeek、ChatGPT、Claude、Kimi、豆包、Gemini 网页版等不支持本地 Agent Skills 或脚本执行环境）的独立对话 Prompt 模板，可直接完整复制到聊天框中生成纯文本专利初稿或参考附图。
-> - **与 `paper2patent Skill`（[`SKILL.md`](skills/paper2patent/SKILL.md)）的关系**：`SKILL.md` 及其配套规范库（`references/`）、校验与排版脚本（`scripts/`）和智慧芽 FTO 撞库模块（`fto/`）已**完整覆盖并升级了以下全部 Prompt 的能力**。如果你在支持 Agent Skills 的工具（Codex、Claude Code、WorkBuddy、Kiro 等）中使用，直接调用 `paper2patent Skill` 即可获得更符合中国专利审查实务的 Word/PDF 成稿、黑白矢量附图、自动形式校验与 FTO 防侵权撞库报告，无需手动复制本文件中的模板。
+> - **与 `paper2patent Skill`（[`SKILL.md`](SKILL.md)）的关系**：`SKILL.md` 及其配套规范库（`references/`）、校验与排版脚本（`scripts/`）和智慧芽 FTO 撞库模块（`fto/`）已**完整覆盖并升级了以下全部 Prompt 的能力**。如果你在支持 Agent Skills 的工具（Codex、Claude Code、WorkBuddy、Kiro 等）中使用，直接调用 `paper2patent Skill` 即可获得更符合中国专利审查实务的 Word/PDF 成稿、黑白矢量附图、自动形式校验与 FTO 防侵权撞库报告，无需手动复制本文件中的模板。
 
 ## 目录
 

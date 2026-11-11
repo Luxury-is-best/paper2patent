@@ -5,9 +5,9 @@ reference_skills/
 user.md
 Agent.md
 AGENTS.md
+files/
 paper2patent/files/
-skills/paper2patent/files/
-skills/paper2patent/fto/mcp.local.json
+fto/mcp.local.json
 **/mcp.local.json
 
 

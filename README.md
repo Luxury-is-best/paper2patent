@@ -26,19 +26,19 @@
 
 本仓库继承自 [7toCR/paper2patent](https://github.com/7toCR/paper2patent)（含原项目完整的五部分撰写规范、黑白附图生成、DOCX/PDF 导出、形式自检脚本及三大对话 Prompt 模板），并在此基础上完成了以下核心升级：
 
-1. **新增第八步：FTO 自由实施（防侵权撞库）排查（`skills/paper2patent/fto/`）**
-   - 在输出完专利申请文件 DOCX/PDF 后，**基于已提炼转化的专利技术方案（`patent.json` 的独立权利要求 1 与核心实施方式）**，接入智慧芽（PatSnap）专利平台 MCP 服务（`patent-platform`）执行防侵权撞库排查。
+1. **新增第八步：FTO 自由实施（防侵权撞库）排查（`fto/`）**
+   - 在输出完专利申请文件 DOCX/PDF 后，**基于已提炼转化的专利技术方案（`reference/patent.json` 的独立权利要求 1 与核心实施方式）**，接入智慧芽（PatSnap）专利平台 MCP 服务（`patent-platform`）执行防侵权撞库排查。
    - **每日 ≤100 篇额度硬性红线与漏斗式配额管控**：`fto/fto_patent_check.py` 内置零依赖原生 HTTP/SSE MCP 客户端与本地持久化配额账本（`~/.paper2patent_fto_quota.json`），采用“语义+布尔双路检索召回（按申请号 `apno` 去重）→ 相关性初筛 → Top 5–10 篇高危专利深拉权利要求全文与法律状态”的漏斗策略，单次任务严格控制在 **20–45 篇**唯一专利以内，超额自动拦截。
    - **全面覆盖原则 / 等同原则逐项比对（Claim Chart）**：严格区分**有效专利**（直接侵权风险）、**审中专利**（潜在授权预警）与**失效专利**（公有领域/现有技术抗辩），输出 `<名称>_FTO撞库排查报告.md` 与 `<名称>_FTO撞库排查报告.docx`，并针对中高风险障碍专利给出工程**规避设计建议（Design-Around）**与我方权利要求加固建议。
 2. **全面汉化 `SKILL.md` 并升级为八步闭环工作流**
    - 将 `SKILL.md` 的技能描述、优秀标准、八步工作流（需求与输入接入 → 原始事实清单 → 发明挖掘与权利要求规划 → 撰写五部分与充分公开审计 → 附图绘制 → 组装质检与生成 → 交付 → FTO 撞库排查）、核心准则及常见场景全面转化为规范中文表述。
 3. **拆分 Evals 评测体系为独立配套仓库 [`paper2patent-evals`](https://github.com/Luxury-is-best/paper2patent-evals)（`v0.0.1`）并与主仓库配合使用**
-   - **双仓库解耦与联动**：将原 `skills/paper2patent/evals/` 拆分为独立 Git 仓库与独立 Skill `paper2patent-evals`，使 `paper2patent` 主包保持轻量纯净、避免常规撰写任务误触发评测流程。评测时，`paper2patent-evals` 通过 `--skill-dir`（或同级目录自动发现）加载指定版本 `paper2patent` 的 `check_patent_draft.py` 统一打分，并在 `summary.json` 中记录检查器路径与版本号。
+   - **双仓库解耦与联动**：将评测套件拆分为独立 Git 仓库与独立 Skill `paper2patent-evals`，使 `paper2patent` 主包保持轻量纯净、避免常规撰写任务误触发评测流程。评测时，`paper2patent-evals` 通过 `--skill-dir`（或同级目录自动发现）加载指定版本 `paper2patent` 的 `check_patent_draft.py` 统一打分，并在 `summary.json` 中记录检查器路径与版本号。
    - **评测集扩展（`evals.json`）**：覆盖 5 篇代表性核心论文（补充必含机制 `must_have`、常见陷阱 `must_not_have`、专项结构断言 `structural_assertions`），并新增 `mode_evals` 覆盖 `human-in-loop`、`claims-only` 与 `review` 三类专项工作流模式。
    - **九维评分细则与评审模型配置（`rubric.md` / `judge_pairwise.py`）**：明确三条一票否决红线（捏造事实、脑补掩盖缺口、漏报重大新颖性/第25条客体风险），补齐 9 大评估维度的 1–5 分五档量表、单稿件 A/B/C/D 质量分级、LLM-as-a-Judge 双向位置交换盲评模板及 `openai` / `anthropic` / `self` 评审模型配置引导。
    - **13 项自动化结构与溯源门禁（`grade_structure.py`）**：升级五部分+五小节顺序与内嵌附图校验、数值溯源审计（自动剥离步骤号/段落号/附图标记，支持千分位、科学计数法与百分比换算匹配）及多轮运行稳定性统计（均值、标准差与波动项识别）。
-4. **仓库结构精简与单包跨 Agent 分发**
-   - 精简仓库根目录，移除特定 IDE 的冗余配置镜像，将运行脚本、参考规范与 `fto/` 撞库模块统一收敛于 `skills/paper2patent/`（配套评测套件独立为 `paper2patent-evals` 仓库），规范中间产物统一存放于 `reference/`、最终交付文档输出至 `out/`，并配置 `.gitignore` 忽略本地运行时产物（如 `skills/paper2patent/files/`、`reference/`、`out/`、`mcp.local.json`）。
+4. **「仓库即 Skill」扁平化架构与单包跨 Agent 分发**
+   - 移除冗余的 `skills/paper2patent/` 套娃层级，将 `SKILL.md`、`VERSION`、`scripts/`、`references/`、`fto/`、`agents/`、`assets/` 直接置于仓库根目录（与同级评测仓库 `paper2patent-evals` 结构对称），支持直接 `git clone` 至各 Agent 的 `skills/` 目录并通过 `git pull` 一键升级；网页端长 Prompt 模板抽离至 [`chatbotprompt.md`](chatbotprompt.md)；规范中间产物统一存放于 `reference/`、最终交付文档输出至 `out/`。
 
 ## 能做什么
 
@@ -66,46 +66,40 @@
 
 ## paper2patent Skill
 
-在支持 Agent Skills 的 AI 工具中，把“**读论文 → 判断公开状态 → 规划权利要求 → 撰写 → 画图 → 检查 → 生成 Word/PDF → 智慧芽 FTO 撞库排查**”整套八步流程交给 AI 完成。整个可分发单元都在 `skills/paper2patent/` 中，不依赖特定 Agent 的仓库配置目录。
+在支持 Agent Skills 的 AI 工具中，把“**读论文 → 判断公开状态 → 规划权利要求 → 撰写 → 画图 → 检查 → 生成 Word/PDF → 智慧芽 FTO 撞库排查**”整套八步流程交给 AI 完成。本仓库采用**「仓库即 Skill」扁平化结构**（根目录即完整可分发 Skill，包含 `SKILL.md`），不依赖特定 Agent 的专有配置目录。
 
 ### 安装
 
-```bash
-git clone https://github.com/Luxury-is-best/paper2patent.git
-cd paper2patent
-```
-
 | 工具 | 安装方式 |
 |---|---|
-| Codex | macOS/Linux：`cp -R skills/paper2patent ~/.codex/skills/`<br>Windows：`Copy-Item -Recurse -Force .\skills\paper2patent "$env:USERPROFILE\.codex\skills\"` |
-| Kiro / Claude Code / 其他支持 Agent Skills 的工具 | 将 `skills/paper2patent/` 导入该工具的 Skills 目录；具体目标路径按工具版本的说明设置 |
-| 豆包、ChatGPT 等支持文件上传的 Agent | 上传 `paper2patent.zip`，并明确要求先读取根目录中的 `SKILL.md`；是否自动触发取决于该 Agent 是否支持 Skills 规范 |
+| Codex | **直接克隆（推荐）**：`git clone https://github.com/Luxury-is-best/paper2patent.git ~/.codex/skills/paper2patent`<br>或从本地复制：<br>macOS/Linux：`cp -R paper2patent ~/.codex/skills/`<br>Windows：`Copy-Item -Recurse -Force .\paper2patent "$env:USERPROFILE\.codex\skills\"` |
+| Kiro / Claude Code / WorkBuddy / 其他支持 Agent Skills 的工具 | 直接将本仓库克隆或导入该工具的 Skills 目录（如 `<skills-dir>/paper2patent`） |
+| 豆包、ChatGPT 等支持文件上传的 Agent | 上传打包后的 `paper2patent.zip`，并明确要求先读取根目录中的 `SKILL.md`；是否自动触发取决于该 Agent 是否支持 Skills 规范 |
 
-只分发主 skill 时，在仓库根目录执行：
+打包主 skill 为 ZIP 时，在仓库父目录执行：
 
 ```bash
-cd skills
 zip -r paper2patent.zip paper2patent \
-  -x 'paper2patent/files/*' 'paper2patent/fto/mcp.local.json' '*/__pycache__/*' '*.pyc'
+  -x 'paper2patent/.git/*' 'paper2patent/.workbuddy/*' 'paper2patent/files/*' \
+     'paper2patent/reference/*' 'paper2patent/out/*' 'paper2patent/fto/mcp.local.json' \
+     '*/__pycache__/*' '*.pyc'
 ```
 
-若需同时打包配套的独立评测 skill（位于同级仓库 `../paper2patent-evals`）：
+若需同时打包配套的独立评测 skill（位于同级目录 `../paper2patent-evals`）：
 
 ```bash
-cd ..
 zip -r paper2patent-evals.zip paper2patent-evals \
   -x 'paper2patent-evals/.git/*' 'paper2patent-evals/inputs/*' 'paper2patent-evals/runs/*' 'paper2patent-evals/judge.config*.json' '*/__pycache__/*' '*.pyc'
 ```
 
-**版本与升级**（当前版本：`0.0.4`，唯一记录于 `skills/paper2patent/VERSION`；配套评测仓库 `paper2patent-evals` 当前版本：`0.0.1`）：升级时可先对比本地已安装目录中的 `VERSION` 版本号（或运行 `python skills/paper2patent/fto/fto_patent_check.py --version`），拉取最新代码或指定版本 Tag 后，**先删除旧目录再复制**，避免已删除的旧文件残留：
+**版本与升级**（当前版本：`0.0.4`，唯一记录于根目录 `VERSION`；配套评测仓库 `paper2patent-evals` 当前版本：`0.0.1`）：可随时查看本地已安装目录中的 `VERSION` 版本号（或运行 `python fto/fto_patent_check.py --version`），通过 `git pull` 一键升级：
 
 ```bash
 # 查看当前已安装 Skill 版本
 cat ~/.codex/skills/paper2patent/VERSION
 
-# 拉取更新（或切换到指定版本标签：git checkout v0.0.4）并重新安装
-git pull
-rm -rf ~/.codex/skills/paper2patent && cp -R skills/paper2patent ~/.codex/skills/
+# 若直接克隆在 skills 目录中，拉取更新即可完成升级（或切换到指定版本标签：git checkout v0.0.4）
+cd ~/.codex/skills/paper2patent && git pull
 ```
 
 ### 使用
@@ -135,24 +129,24 @@ Skill 的最终回复采用**极简输出规范（路由通道 + 交付产物清
 ### 第八步：FTO 撞库排查（智慧芽 MCP）
 
 使用前需配置智慧芽 MCP 密钥（任选其一，均不会被 Git 提交；若未配置，Skill 也会在执行时主动引导你提供）：
-- **对话内引导配置（推荐）**：直接在对话中把智慧芽 MCP Token（如 `pp_...`）发给 Agent，或运行以下命令一键写入本地隔离文件 `skills/paper2patent/fto/mcp.local.json`（已被 `.gitignore` 忽略）：
+- **对话内引导配置（推荐）**：直接在对话中把智慧芽 MCP Token（如 `pp_...`）发给 Agent，或运行以下命令一键写入本地隔离文件 `fto/mcp.local.json`（已被 `.gitignore` 忽略）：
   ```bash
-  python skills/paper2patent/fto/fto_patent_check.py set-token <你的智慧芽MCP密钥>
+  python fto/fto_patent_check.py set-token <你的智慧芽MCP密钥>
   ```
 - **环境变量配置**：设置 `export PATENT_MCP_TOKEN="你的密钥"`（Windows PowerShell：`$env:PATENT_MCP_TOKEN="你的密钥"`）。
-- **手动本地文件配置**：将 `skills/paper2patent/fto/mcp.json` 复制为 `skills/paper2patent/fto/mcp.local.json` 并填入密钥。
+- **手动本地文件配置**：将 `fto/mcp.json` 复制为 `fto/mcp.local.json` 并填入密钥。
 
-在完成步骤 1–6 输出专利申请文件 DOCX/PDF 后，Skill 会基于已提炼的 `patent.json`（独立权利要求 1 及核心实施方式）继续执行第八步 FTO 撞库排查（详见 `skills/paper2patent/fto/fto-workflow.md`）：
+在完成步骤 1–6 输出专利申请文件 DOCX/PDF 后，Skill 会基于已提炼的 `reference/patent.json`（独立权利要求 1 及核心实施方式）继续执行第八步 FTO 撞库排查（详见 `fto/fto-workflow.md`）：
 
 ```bash
 # 1. 检查智慧芽 MCP 密钥配置状态与今日剩余额度（硬性上限 100 篇/日）
-python skills/paper2patent/fto/fto_patent_check.py quota
+python fto/fto_patent_check.py quota
 
-# 2. 从 patent.json 拆解核心技术特征，执行智慧芽语义+布尔双路检索并拉取 Top 候选专利权利要求与法律状态
-python skills/paper2patent/fto/fto_patent_check.py auto-screen patent.json -o out/fto_candidates.json
+# 2. 从 reference/patent.json 拆解核心技术特征，执行智慧芽语义+布尔双路检索并拉取 Top 候选专利权利要求与法律状态
+python fto/fto_patent_check.py auto-screen reference/patent.json -o reference/fto_candidates.json
 
-# 3. 完成全面覆盖/等同原则逐项特征比对（写入 out/fto_analysis.json）后，一键生成 MD 与 DOCX 报告
-python skills/paper2patent/fto/fto_patent_check.py report out/fto_analysis.json \
+# 3. 完成全面覆盖/等同原则逐项特征比对（写入 reference/fto_analysis.json）后，一键生成 MD 与 DOCX 报告
+python fto/fto_patent_check.py report reference/fto_analysis.json \
   --md-output out/<名称>_FTO撞库排查报告.md \
   --docx-output out/<名称>_FTO撞库排查报告.docx
 ```
@@ -161,9 +155,12 @@ python skills/paper2patent/fto/fto_patent_check.py report out/fto_analysis.json 
 <summary><b>目录结构</b></summary>
 
 ```text
-skills/paper2patent/                 可独立打包和分发的完整 Skill（v0.0.4）
+paper2patent/                        仓库根目录即完整可分发 Skill（v0.0.4）
 ├── VERSION                          Skill 版本号文件（当前：0.0.4）
 ├── SKILL.md                         八步完整工作流与核心规则（中文规范版）
+├── README.md                        项目与安装使用说明
+├── CHANGELOG.md                     版本演进记录
+├── chatbotprompt.md                 面向网页端对话框的独立长 Prompt 模板（Flash / Pro / Gemini）
 ├── agents/
 │   └── openai.yaml                  Agent 默认提示词与元数据配置
 ├── references/
@@ -211,7 +208,7 @@ skills/paper2patent/                 可独立打包和分发的完整 Skill（v
 | **论文转专利 Pro** | [`chatbotprompt.md#论文转专利-pro`](chatbotprompt.md#论文转专利-pro) | 完整进阶版：包含五部分详细撰写框架、三层保护范围布局方法论、四阶段内部执行流与输出前强制自检清单。 |
 | **专利附图生成（Gemini）** | [`chatbotprompt.md#专利附图生成gemini`](chatbotprompt.md#专利附图生成gemini) | 网页端生图版：配合 Gemini 图像生成能力，根据论文与专利文本绘制黑白线条流程图与系统框图。 |
 
-> 💡 **说明**：[`skills/paper2patent/SKILL.md`](skills/paper2patent/SKILL.md) 及其配套规范与脚本已完整覆盖并升级了上述全部 Prompt 的能力（修正了旧模板格式偏差，并新增确定性代码自检、矢量附图生成、Word/PDF 排版与智慧芽 FTO 撞库排查）。需要完整交付物时请优先使用上方的 [paper2patent Skill](#paper2patent-skill)。
+> 💡 **说明**：[`SKILL.md`](SKILL.md) 及其配套规范与脚本已完整覆盖并升级了上述全部 Prompt 的能力（修正了旧模板格式偏差，并新增确定性代码自检、矢量附图生成、Word/PDF 排版与智慧芽 FTO 撞库排查）。需要完整交付物时请优先使用上方的 [paper2patent Skill](#paper2patent-skill)。
 
 ## 使用须知
 
@@ -224,14 +221,14 @@ skills/paper2patent/                 可独立打包和分发的完整 Skill（v
 
 完整版本历史请查阅 [**CHANGELOG.md**](CHANGELOG.md)：
 
-- **v0.0.4 (2026-11-11)**：将评测套件反向拆分为独立配套仓库 [`paper2patent-evals`](https://github.com/Luxury-is-best/paper2patent-evals)（`v0.0.1`），实现双仓库联动与评测标尺解耦；统一规范中间产物（`reference/`）与最终交付产物（`out/`）目录严格隔离；版本号唯一收敛至 `skills/paper2patent/VERSION`。
+- **v0.0.4 (2026-11-11)**：将评测套件反向拆分为独立配套仓库 [`paper2patent-evals`](https://github.com/Luxury-is-best/paper2patent-evals)（`v0.0.1`），并将主仓库目录扁平化至根目录（`SKILL.md` 与 `VERSION` 置于仓库根部，与评测仓库结构对称），抽离网页端长 Prompt 至 [`chatbotprompt.md`](chatbotprompt.md)，统一规范中间产物（`reference/`）与最终交付产物（`out/`）目录严格隔离。
 - **v0.0.3 (2026-11-08)**：规范极简最终输出（路由通道 + 交付产物清单 + 一句话核心摘要与提醒）；未配置智慧芽 MCP 密钥时强制明确报告“当前没有接入专利数据库”，严禁虚构对比专利号。
 - **v0.0.2 (2026-11-08)**：主 Skill 增加智慧芽 MCP 密钥状态核查与交互引导，`fto_patent_check.py` 新增 `mcp_auth` 脱敏诊断与 `set-token` 子命令（安全写入 `.gitignore` 忽略的 `fto/mcp.local.json`）。
 - **v0.0.1 (2026-11-08)**：Fork 维护版首次正式发布——新增第八步智慧芽（PatSnap）MCP FTO 防侵权撞库排查（每日 ≤100 篇额度管控、全面覆盖/等同原则 Claim Chart 比对、MD/DOCX 报告生成）、全面汉化 `SKILL.md` 八步闭环工作流、升级 Evals v2.0 评测体系。
 - **上游基石（2026-10）**：继承自原作者重构的五部分专利撰写标准、新颖性与 AI 算法客体合规审查、黑白矢量附图布局脚本、DOCX/PDF 生成与 20+ 项形式自检脚本。
 
 **相关规范与评测入口**：
-- **FTO 撞库排查规范**：[`skills/paper2patent/fto/fto-workflow.md`](skills/paper2patent/fto/fto-workflow.md)
+- **FTO 撞库排查规范**：[`fto/fto-workflow.md`](fto/fto-workflow.md)
 - **独立基准评测套件**：[`Luxury-is-best/paper2patent-evals`](https://github.com/Luxury-is-best/paper2patent-evals)（含 5 篇代表性核心论文 + 3 类专项模式评测 `evals.json`、13 项自动化结构与数值溯源门禁 `grade_structure.py`、9 维成对盲评量表 `rubric.md` 与 `judge_pairwise.py`；建议克隆于同级目录 `../paper2patent-evals/` 配合使用）
 
 ## 致谢
