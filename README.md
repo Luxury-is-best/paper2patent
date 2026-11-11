@@ -32,12 +32,13 @@
    - **全面覆盖原则 / 等同原则逐项比对（Claim Chart）**：严格区分**有效专利**（直接侵权风险）、**审中专利**（潜在授权预警）与**失效专利**（公有领域/现有技术抗辩），输出 `<名称>_FTO撞库排查报告.md` 与 `<名称>_FTO撞库排查报告.docx`，并针对中高风险障碍专利给出工程**规避设计建议（Design-Around）**与我方权利要求加固建议。
 2. **全面汉化 `SKILL.md` 并升级为八步闭环工作流**
    - 将 `SKILL.md` 的技能描述、优秀标准、八步工作流（需求与输入接入 → 原始事实清单 → 发明挖掘与权利要求规划 → 撰写五部分与充分公开审计 → 附图绘制 → 组装质检与生成 → 交付 → FTO 撞库排查）、核心准则及常见场景全面转化为规范中文表述。
-3. **修改 Evals 评测体系至单独skill并使用现作者版本管理 v0.0.1（`skills/paper2patent/evals/`）**
+3. **拆分 Evals 评测体系为独立配套仓库 [`paper2patent-evals`](https://github.com/Luxury-is-best/paper2patent-evals)（`v0.0.1`）并与主仓库配合使用**
+   - **双仓库解耦与联动**：将原 `skills/paper2patent/evals/` 拆分为独立 Git 仓库与独立 Skill `paper2patent-evals`，使 `paper2patent` 主包保持轻量纯净、避免常规撰写任务误触发评测流程。评测时，`paper2patent-evals` 通过 `--skill-dir`（或同级目录自动发现）加载指定版本 `paper2patent` 的 `check_patent_draft.py` 统一打分，并在 `summary.json` 中记录检查器路径与版本号。
    - **评测集扩展（`evals.json`）**：覆盖 5 篇代表性核心论文（补充必含机制 `must_have`、常见陷阱 `must_not_have`、专项结构断言 `structural_assertions`），并新增 `mode_evals` 覆盖 `human-in-loop`、`claims-only` 与 `review` 三类专项工作流模式。
-   - **九维评分细则重构（`rubric.md`）**：明确三条一票否决红线（捏造事实、脑补掩盖缺口、漏报重大新颖性/第25条客体风险），补齐 9 大评估维度的 1–5 分五档量表、单稿件 A/B/C/D 质量分级及 LLM-as-a-Judge 双向位置交换盲评模板。
+   - **九维评分细则与评审模型配置（`rubric.md` / `judge_pairwise.py`）**：明确三条一票否决红线（捏造事实、脑补掩盖缺口、漏报重大新颖性/第25条客体风险），补齐 9 大评估维度的 1–5 分五档量表、单稿件 A/B/C/D 质量分级、LLM-as-a-Judge 双向位置交换盲评模板及 `openai` / `anthropic` / `self` 评审模型配置引导。
    - **13 项自动化结构与溯源门禁（`grade_structure.py`）**：升级五部分+五小节顺序与内嵌附图校验、数值溯源审计（自动剥离步骤号/段落号/附图标记，支持千分位、科学计数法与百分比换算匹配）及多轮运行稳定性统计（均值、标准差与波动项识别）。
 4. **仓库结构精简与单包跨 Agent 分发**
-   - 精简仓库根目录，移除特定 IDE 的冗余配置镜像，将运行脚本、参考规范、`fto/` 撞库模块与 `evals/` 评测套件统一收敛于 `skills/paper2patent/`，并配置 `.gitignore` 忽略本地运行时产物（如 `skills/paper2patent/files/`、`evals/inputs/`、`evals/runs/`）。
+   - 精简仓库根目录，移除特定 IDE 的冗余配置镜像，将运行脚本、参考规范与 `fto/` 撞库模块统一收敛于 `skills/paper2patent/`（配套评测套件独立为 `paper2patent-evals` 仓库），规范中间产物统一存放于 `reference/`、最终交付文档输出至 `out/`，并配置 `.gitignore` 忽略本地运行时产物（如 `skills/paper2patent/files/`、`reference/`、`out/`、`mcp.local.json`）。
 
 ## 能做什么
 
@@ -50,7 +51,7 @@
 | ✅ 自动检查 | 禁用词、单句号、引用关系、引用基础、摘要字数、附图编号与附图标记一致性等 |
 | ⚠️ 风险与缺口 | 论文公开与新颖性、AI/算法发明的客体问题、充分公开核查与待补充材料清单 |
 | 🛡️ FTO 撞库排查 | 接入智慧芽（PatSnap）MCP 数据库（每日 ≤100 篇额度管控），对独立权利要求执行全面覆盖/等同原则逐项特征比对（Claim Chart），生成 MD/DOCX 报告与规避设计建议 |
-| 📊 双层基准评测 | 内置 Evals v2.0（13 项自动化结构/数值溯源门禁 + 9 维成对盲评量表），保障技能迭代质量 |
+| 📊 双层基准评测 | 配套独立评测仓库 [`paper2patent-evals`](https://github.com/Luxury-is-best/paper2patent-evals)（13 项自动化结构/数值溯源门禁 + 9 维成对盲评量表），与主 Skill 配合保障迭代质量 |
 
 撰写与排查依据：《专利法》（2020年修正）、《专利法实施细则》（2023年修订）、《专利审查指南》（2026年1月1日施行版）、《最高人民法院关于审理专利纠纷案件适用法律问题的若干规定》（全面覆盖原则与等同原则）。
 
@@ -80,12 +81,20 @@ cd paper2patent
 | Kiro / Claude Code / 其他支持 Agent Skills 的工具 | 将 `skills/paper2patent/` 导入该工具的 Skills 目录；具体目标路径按工具版本的说明设置 |
 | 豆包、ChatGPT 等支持文件上传的 Agent | 上传 `paper2patent.zip`，并明确要求先读取根目录中的 `SKILL.md`；是否自动触发取决于该 Agent 是否支持 Skills 规范 |
 
-只分发 skill 时，在仓库根目录执行：
+只分发主 skill 时，在仓库根目录执行：
 
 ```bash
 cd skills
 zip -r paper2patent.zip paper2patent \
-  -x 'paper2patent/evals/inputs/*' 'paper2patent/evals/runs/*' 'paper2patent/files/*' 'paper2patent/fto/mcp.local.json' '*/__pycache__/*' '*.pyc'
+  -x 'paper2patent/files/*' 'paper2patent/fto/mcp.local.json' '*/__pycache__/*' '*.pyc'
+```
+
+若需同时打包配套的独立评测 skill（位于同级仓库 `../paper2patent-evals`）：
+
+```bash
+cd ..
+zip -r paper2patent-evals.zip paper2patent-evals \
+  -x 'paper2patent-evals/.git/*' 'paper2patent-evals/inputs/*' 'paper2patent-evals/runs/*' 'paper2patent-evals/judge.config*.json' '*/__pycache__/*' '*.pyc'
 ```
 
 **版本与升级**（当前版本：`0.0.3`，记录于 `VERSION` 与 `skills/paper2patent/VERSION`）：升级时可先对比本地已安装目录中的 `VERSION` 版本号（或运行 `python skills/paper2patent/fto/fto_patent_check.py --version`），拉取最新代码或指定版本 Tag 后，**先删除旧目录再复制**，避免已删除的旧文件残留：
@@ -177,13 +186,17 @@ skills/paper2patent/                 可独立打包和分发的完整 Skill（v
 │   ├── fto-workflow.md              FTO 撞库排查四步法、额度红线与全面覆盖/等同判定规范
 │   ├── fto_patent_check.py          零依赖 MCP 客户端、每日 100 篇额度管控、检索与 MD/DOCX 报告生成脚本
 │   └── mcp.json                     智慧芽 patent-platform MCP 服务配置
-├── assets/
-│   └── example_patent_content.json  完整的结构化内容示例
-└── evals/                           Evals v2.0 技能维护评估套件
-    ├── README.md                    两层基准评测体系说明与实验控制规范
-    ├── evals.json                   5 篇核心基准论文 + 3 类专项模式评测配置
-    ├── rubric.md                    九维 1–5 分评分细则、一票否决红线与双向盲评模板
-    └── grade_structure.py           13 项自动化结构与数值溯源门禁脚本
+└── assets/
+    └── example_patent_content.json  完整的结构化内容示例
+
+# 配套评测套件位于独立仓库 paper2patent-evals（建议与本仓库并列克隆于同一父目录）：
+# ../paper2patent-evals/
+# ├── SKILL.md                       评测 Skill 入口与评审模型引导规范
+# ├── VERSION                        评测套件版本号（当前：0.0.1）
+# ├── evals.json                     5 篇核心基准论文 + 3 类专项模式评测配置
+# ├── rubric.md                      九维 1–5 分评分细则、一票否决红线与双向盲评模板
+# ├── grade_structure.py             13 项自动化结构与数值溯源门禁脚本（通过 --skill-dir 调用主 Skill 检查器）
+# └── judge_pairwise.py              LLM-as-a-Judge / Self 评审模型配置与成对盲评骨架
 ```
 
 </details>
@@ -1165,7 +1178,7 @@ skills/paper2patent/                 可独立打包和分发的完整 Skill（v
 
 - 更新记录：[CHANGELOG.md](CHANGELOG.md)
 - FTO 撞库排查规范：[skills/paper2patent/fto/fto-workflow.md](skills/paper2patent/fto/fto-workflow.md)
-- 评估方法（Evals v2.0 评分细则、盲评流程、13 项结构检查脚本）：[skills/paper2patent/evals/README.md](skills/paper2patent/evals/README.md)
+- 评估方法（独立评测仓库 `paper2patent-evals`：评分细则、盲评流程、13 项结构检查脚本）：[Luxury-is-best/paper2patent-evals](https://github.com/Luxury-is-best/paper2patent-evals)（本地同级目录 `../paper2patent-evals/README.md`）
 
 ## 致谢
 

@@ -131,4 +131,4 @@ python <skill>/scripts/export_patent_pdf.py out/<名称>_专利申请文件.docx
 
 ## 技能维护与评测
 
-仅当用户明确要求修改、基准测试或评测本技能时，才查阅 `evals/README.md`。附带的评测套件属于技能维护工具，在常规的论文转专利撰写任务中无需加载或运行。
+评测请使用 `paper2patent-evals` skill（独立配套评测仓库）。常规的论文转专利撰写任务无需加载或运行评测套件。
