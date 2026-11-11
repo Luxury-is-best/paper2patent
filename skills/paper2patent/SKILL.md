@@ -1,7 +1,7 @@
 ---
 name: paper2patent
 version: 0.0.3
-description: 将学术论文（PDF、LaTeX、粘贴文本、学位论文章节或技术交底书）转化为中国发明专利申请初稿——说明书摘要、摘要附图、权利要求书、说明书、说明书附图——以附带黑白专利附图的 DOCX/PDF 格式交付，附带一份独立的撰写说明文件（涵盖新颖性/公开风险、权利要求布局及权利要求与论文的支撑关系），并在输出完 DOCX/PDF 后通过智慧芽（PatSnap）专利数据库 MCP 执行第八步 FTO（自由实施/防侵权）撞库排查，生成 FTO 撞库排查报告（MD/DOCX）。每当用户希望“论文转专利”、“写专利/专利申请书/专利交底书”、起草或审查“权利要求书”、撰写“说明书”、制作“专利附图”、根据源论文核对专利草稿，或对转化后的技术方案开展“FTO 撞库排查/防侵权检索”时使用，即使他们只说了“帮我把这篇论文写成专利”。
+description: 将学术论文（PDF、LaTeX、粘贴文本以及聊天内容、论文章节或技术交底书）转化为中国发明专利申请初稿——说明书摘要、摘要附图、权利要求书、说明书、说明书附图——以附带黑白专利附图的 DOCX/PDF 格式交付，附带一份独立的撰写说明文件（涵盖新颖性/公开风险、权利要求布局及权利要求与论文的支撑关系），并在输出完 DOCX/PDF 后通过智慧芽（PatSnap）专利数据库 MCP 执行第八步 FTO（自由实施/防侵权）撞库排查，生成 FTO 撞库排查报告（MD/DOCX）。每当用户希望“论文转专利”、“写专利/专利申请书/专利交底书”、起草或审查“权利要求书”、撰写“说明书”、制作“专利附图”、根据源论文核对专利草稿，或对转化后的技术方案开展“FTO 撞库排查/防侵权检索”时使用，即使他们只说了“帮我把这篇论文写成专利”。
 ---
 
 # Paper2Patent
@@ -21,7 +21,7 @@ description: 将学术论文（PDF、LaTeX、粘贴文本、学位论文章节�
 
 ### 1. 需求与输入接入（Intake 与路由通道判定）
 
-- **判定路由通道（工作流模式）**：`direct`（默认通道：直接撰写全部内容、生成文件并执行 FTO 排查）、`human-in-loop`（起草前先向用户确认公开状态、发明点及权利要求规划）、`text-only`（仅输出文本，不生成文件）、`claims-only`（仅撰写权利要求书）、`review`（根据论文审查已有专利草稿），或 `fto-only`（仅对已有专利方案执行步骤 8 FTO 撞库排查）。
+- **判定路由通道（工作流模式）**：`direct`（默认通道：直接撰写全部内容、生成文件并执行 FTO 排查）、`human-in-loop`（起草前先向用户确认公开状态、发明点及权利要求规划）、`text-only`（ 写 JSON 但不出 DOCX）、`claims-only`（仅撰写权利要求书）、`review`（根据论文审查已有专利草稿），或 `fto-only`（仅对已有专利方案执行步骤 8 FTO 撞库排查）。
 - 通读**整篇**论文：每个章节、公式、附图、图注、表格及附录。对于 PDF 输入，渲染包含方法图的页面并仔细审阅；对于纯文本输入，根据图注和图例说明开展工作。附图必须遵循论文的实际技术结构。有关 PDF 处理与最低输入要求，详见 `references/input-requirements.md`。
 - 确认**公开状态**（arXiv？已录用/已发表？开源代码？学术汇报？）与公开日期。这直接决定了该专利是否仍具备新颖性。每次都请阅读 `references/patentability-and-disclosure.md`，因为核实结果将决定对用户的提示内容。
 - **核查智慧芽（PatSnap）MCP 密钥状态**：若任务需执行第八步 FTO 撞库排查（如 `direct` 默认全流程或 `fto-only` 任务），运行 `python <skill>/fto/fto_patent_check.py quota` 检查 `mcp_auth.configured` 状态。仓库内置的 `fto/mcp.json` 仅为 `<YOUR_PATENT_MCP_TOKEN>` 脱敏占位模板；若检测到未配置密钥：
@@ -48,13 +48,13 @@ description: 将学术论文（PDF、LaTeX、粘贴文本、学位论文章节�
 
 ### 6. 组装、质检与生成
 
-编写 `references/document-generation.md` 中所描述的结构化 JSON（完整示例可参考 `assets/example_patent_content.json`）。随后在包含该 JSON 的目录下运行以下命令（`<skill>` 代表本技能所在目录）：
+编写 `references/document-generation.md` 中所描述的结构化 JSON 并保存为 `reference/patent.json`（完整示例可参考 `assets/example_patent_content.json`）。**所有有下游消费者的中间产物必须统一存放在 `reference/` 目录下，最终面向用户交付的文档统一输出至 `out/` 目录下**（`<skill>` 代表本技能所在目录）：
 
 ```bash
-python <skill>/scripts/check_patent_draft.py patent.json
-python <skill>/scripts/generate_patent_drawings.py patent.json -o out --update-json
-python <skill>/scripts/generate_patent_docx.py patent.json -o out/<名称>_专利申请文件.docx --require-drawings
-python <skill>/scripts/export_patent_pdf.py out/<名称>_专利申请文件.docx -o out/<名称>_专利申请文件.pdf --preview-dir out/preview
+python <skill>/scripts/check_patent_draft.py reference/patent.json
+python <skill>/scripts/generate_patent_drawings.py reference/patent.json -o reference --update-json
+python <skill>/scripts/generate_patent_docx.py reference/patent.json -o out/<名称>_专利申请文件.docx --require-drawings
+python <skill>/scripts/export_patent_pdf.py out/<名称>_专利申请文件.docx -o out/<名称>_专利申请文件.pdf --preview-dir reference/preview
 ```
 
 - 修复校验脚本检测出的所有 `ERROR` 并逐项评估 `WARN`，反复运行直至通过。校验脚本能精准捕获自审文本时极易忽略的形式缺陷（单一终结句号、含糊词、引用依赖规则、引用基础/先行词、300字摘要字数限制、图号连续性、附图标记规范性），并对保护范围问题进行警示（权利要求中出现代码字段名或消极限制负面限定、权利要求 1 过长或堆砌列举过多、存在附图未呈现的修正回退循环、说明书中混入撰写备注等）。
@@ -71,18 +71,18 @@ python <skill>/scripts/export_patent_pdf.py out/<名称>_专利申请文件.docx
 2. **交付产物**：仅列出本次实际生成的产物文件清单：
    - `<名称>_专利申请文件.docx` / `<名称>_专利申请文件.pdf`（五部分申请正文与黑白附图）
    - `<名称>_专利申请文件_撰写说明.docx`（首部含《待补充材料清单》、公开与客体风险、权利要求出处对照）
-   - `<名称>_FTO撞库排查报告.md` / `<名称>_FTO撞库排查报告.docx`（若未配置智慧芽 MCP 密钥，则在此明确写明：**未接入专利数据库（缺少智慧芽 MCP 密钥），仅输出离线特征拆解 `fto_features.json`**）
+   - `<名称>_FTO撞库排查报告.md` / `<名称>_FTO撞库排查报告.docx`（若未配置智慧芽 MCP 密钥，则在此明确写明：**未接入专利数据库（缺少智慧芽 MCP 密钥），仅输出离线特征拆解 `reference/fto_features.json`**）
 3. **一句话摘要与合规提醒**：用 2–3 句话精炼交代：独权 1 核心发明点与权项布局（如“方法1–6 + 装置7 + 设备8 + 介质9”）、公开/新颖性结论、FTO 排查结论（或提示提供智慧芽 MCP 密钥以接入专利数据库），并附固定提醒：“本输出仅为专利申请初稿，不构成法律意见；正式提交前请核对《撰写说明》首部的待补充材料清单，并由专业专利代理师结合现有技术检索进行审核。”
 
 ### 8. FTO 撞库排查（自由实施与防侵权排查）
 
-在完成步骤 6 输出完专利申请文件 DOCX、撰写说明 DOCX 及 PDF 后，**必须基于已提炼转化的专利技术方案（`patent.json` 中的独立权利要求 1 及核心实施方式）继续执行第八步 FTO 撞库排查**，而非直接用原始论文散文盲目检索。操作规范与判定细则详见 `fto/fto-workflow.md`，配置文件与执行脚本位于 `fto/mcp.json` 和 `fto/fto_patent_check.py`。
+在完成步骤 6 输出完专利申请文件 DOCX、撰写说明 DOCX 及 PDF 后，**必须基于已提炼转化的专利技术方案（`reference/patent.json` 中的独立权利要求 1 及核心实施方式）继续执行第八步 FTO 撞库排查**，而非直接用原始论文散文盲目检索。操作规范与判定细则详见 `fto/fto-workflow.md`，配置文件与执行脚本位于 `fto/mcp.json` 和 `fto/fto_patent_check.py`。
 
 1. **密钥核查、无专利数据库报告与密钥引导（安全隔离，严禁入库）**：
    - 运行 `python <skill>/fto/fto_patent_check.py quota` 同时核查今日剩余额度与 `mcp_auth.configured` 密钥状态。
    - **当 `mcp_auth.configured` 为 `false`（没有智慧芽 MCP 密钥）或接口返回 401/403 鉴权失败时**：
      - **必须明确向用户报告：“当前没有接入专利数据库（未配置智慧芽 PatSnap MCP 密钥），无法执行在线 FTO 撞库排查。”**（严禁静默跳过，严禁在无数据库连接时利用大模型自身记忆虚构对比专利号或伪造在线撞库报告）。
-     - 同时运行 `python <skill>/fto/fto_patent_check.py extract-features patent.json -o out/fto_features.json` 生成离线技术特征拆解表与推荐检索式，并在极简交付回复中引导用户提供智慧芽 MCP Token（如 `pp_...`），拿到后通过 `python <skill>/fto/fto_patent_check.py set-token <用户提供的Token>` 安全写入本地隔离文件 `<skill>/fto/mcp.local.json`（已被 `.gitignore` 忽略，绝不入库）再续跑在线撞库。
+     - 同时运行 `python <skill>/fto/fto_patent_check.py extract-features reference/patent.json -o reference/fto_features.json` 生成离线技术特征拆解表与推荐检索式，并在极简交付回复中引导用户提供智慧芽 MCP Token（如 `pp_...`），拿到后通过 `python <skill>/fto/fto_patent_check.py set-token <用户提供的Token>` 安全写入本地隔离文件 `<skill>/fto/mcp.local.json`（已被 `.gitignore` 忽略，绝不入库）再续跑在线撞库。
 2. **连接智慧芽（PatSnap）MCP 数据库并严守每日 100 篇额度红线**：
    - 使用 `patent-platform` 智慧芽 MCP 服务（支持 `search_patents`、`semantic_search_patents`、`batch_prefetch_claims`、`get_claims`、`get_legal_status`、`get_bibliography`）。
    - **每日额度硬性限制在 100 篇唯一专利以内**（由 `fto/fto_patent_check.py` 自动在本地记录并强制拦截）。采用“漏斗式”配额策略：单次任务控制在 **20–45 篇**唯一专利以内（先通过语义+布尔检索召回 15–35 篇并按申请号 `apno` 去重，再仅对高相关度 Top 5–10 篇有效/审中专利拉取权利要求全文与法律状态）。
@@ -94,11 +94,11 @@ python <skill>/scripts/export_patent_pdf.py out/<名称>_专利申请文件.docx
    # （若用户提供了新密钥，先安全保存至本地隔离文件 fto/mcp.local.json）
    python <skill>/fto/fto_patent_check.py set-token <YOUR_PATENT_MCP_TOKEN>
 
-   # 2. 从 patent.json 拆解核心技术特征，执行智慧芽语义+布尔双路检索并拉取 Top 候选专利权利要求与法律状态
-   python <skill>/fto/fto_patent_check.py auto-screen patent.json -o out/fto_candidates.json
+   # 2. 从 reference/patent.json 拆解核心技术特征，执行智慧芽语义+布尔双路检索并拉取 Top 候选专利权利要求与法律状态
+   python <skill>/fto/fto_patent_check.py auto-screen reference/patent.json -o reference/fto_candidates.json
 
-   # 3. 依据 fto/fto-workflow.md 执行“全面覆盖原则/等同原则”逐项特征比对（Claim Chart），写入 out/fto_analysis.json 后生成报告：
-   python <skill>/fto/fto_patent_check.py report out/fto_analysis.json \
+   # 3. 依据 fto/fto-workflow.md 执行“全面覆盖原则/等同原则”逐项特征比对（Claim Chart），写入 reference/fto_analysis.json 后生成报告：
+   python <skill>/fto/fto_patent_check.py report reference/fto_analysis.json \
      --md-output out/<名称>_FTO撞库排查报告.md \
      --docx-output out/<名称>_FTO撞库排查报告.docx
    ```
@@ -114,6 +114,7 @@ python <skill>/scripts/export_patent_pdf.py out/<名称>_专利申请文件.docx
 - 专利申请文件正文仅包含技术方案的公开内容。严格遵循论文给出的事实边界；关于撰写意图、论文出处或缺失资料的说明统一放入 `notes`，需要发明人补充的材料统一记入 `notes.handover`。
 - 客观说明草稿定位：本草稿旨在系统梳理并充分公开论文中的技术方案，并未注入额外的发明构思，亦不对最终授权概率作任何保证。
 - 保持发明名称（不超过25个字，严禁包含商业品牌或模型专有名称）在摘要、权利要求书和说明书全局严格一致。
+- **中间产物与最终交付产物目录隔离**：管线中所有具有下游消费者（供后续脚本或 Agent 审阅、合成、比对消费）的中间产物必须统一存放在 `reference/` 目录下，包括：PDF 解析文本与原图渲染页（`reference/paper.txt`、`reference/fig-*.png`）、专利结构化核心 JSON（`reference/patent.json`）、形式校验报告（`reference/check_report.json`）、生成的专利附图源文件（`reference/<prefix>_图N.svg` 与 `.png`）、PDF 逐页渲染预览图（`reference/preview/page-*.png`）以及 FTO 撞库中间数据（`reference/fto_features.json`、`reference/fto_candidates.json`、`reference/fto_extra_search.json`、`reference/fto_extra_details.json`、`reference/fto_analysis.json`）。最终交付给用户的正式文档（`<名称>_专利申请文件.docx`、`<名称>_专利申请文件_撰写说明.docx`、`<名称>_专利申请文件.pdf`、`<名称>_FTO撞库排查报告.md` / `.docx`）统一存放在 `out/` 目录下，严禁将中间产物散落在工作目录根部或混入 `out/` 交付目录。
 - 绝不在代码仓库中存储用户的论文原文、草稿、个人敏感数据或明文 API/MCP 密钥（智慧芽密钥仅保存在本地 `.gitignore` 忽略的 `fto/mcp.local.json` 或环境变量 `PATENT_MCP_TOKEN` 中）。
 
 ## 常见处理场景

@@ -62,20 +62,20 @@ Write the JSON with UTF-8 and real Chinese punctuation. Prefer writing it with a
 
 ## Pipeline
 
-Run from the folder that holds the JSON; `<skill>` is this skill's directory.
+Store all intermediate artifacts with downstream consumers in `reference/` and final deliverables in `out/`; `<skill>` is this skill's directory.
 
 ```bash
 # 1. Formal checks (repeat until no ERROR; judge each WARN)
-python <skill>/scripts/check_patent_draft.py patent.json
+python <skill>/scripts/check_patent_draft.py reference/patent.json
 
-# 2. Drawings: SVG + PNG, updates drawing_assets in the JSON
-python <skill>/scripts/generate_patent_drawings.py patent.json -o out --update-json
+# 2. Drawings: SVG + PNG into reference/, updates drawing_assets in reference/patent.json
+python <skill>/scripts/generate_patent_drawings.py reference/patent.json -o reference --update-json
 
-# 3. Application DOCX + drafting notes DOCX (<name>_撰写说明.docx)
-python <skill>/scripts/generate_patent_docx.py patent.json -o out/<名称>_专利申请文件.docx --require-drawings
+# 3. Application DOCX + drafting notes DOCX (<name>_撰写说明.docx) into out/
+python <skill>/scripts/generate_patent_docx.py reference/patent.json -o out/<名称>_专利申请文件.docx --require-drawings
 
-# 4. PDF via LibreOffice + page previews
-python <skill>/scripts/export_patent_pdf.py out/<名称>_专利申请文件.docx -o out/<名称>_专利申请文件.pdf --preview-dir out/preview
+# 4. PDF via LibreOffice into out/ + page previews into reference/preview
+python <skill>/scripts/export_patent_pdf.py out/<名称>_专利申请文件.docx -o out/<名称>_专利申请文件.pdf --preview-dir reference/preview
 ```
 
 Options:
@@ -83,7 +83,7 @@ Options:
 - `generate_patent_docx.py --number-paragraphs` prefixes description paragraphs with [0001]-style numbers (useful for review; CNIPA's filing client can also add them).
 - `--embed-svg` additionally embeds the SVG (Word 2016+ then shows vector graphics; the PNG remains the fallback).
 - `--notes-output PATH` / `--no-notes` control the drafting-notes file.
-- `export_patent_pdf.py --content-json patent.json` renders an image-based review PDF when LibreOffice is not installed. Tell the user it is a review copy, not an editable or fileable document.
+- `export_patent_pdf.py --content-json reference/patent.json` renders an image-based review PDF when LibreOffice is not installed. Tell the user it is a review copy, not an editable or fileable document.
 
 What the application DOCX contains: 说明书摘要 → 摘要附图 (image only) → 权利要求书 → 说明书 (name, then 技术领域, 背景技术, 发明内容, 附图说明, 具体实施方式) → 说明书附图 (each image with "图N" underneath). Each part starts on a new page; pages are numbered; A4, 宋体 小四, 1.5 line spacing.
 

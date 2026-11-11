@@ -24,8 +24,8 @@ The disclosure question matters most; see `patentability-and-disclosure.md`.
 
 ## Reading a PDF
 
-- Extract text with layout preserved (e.g. `pdftotext -layout paper.pdf paper.txt`, or the pdf skill if available). Check that equations and tables survived; re-read them from page images where extraction garbles them.
-- Render the pages with the architecture and pipeline figures (e.g. `pdftoppm -r 110 -png -f 3 -l 4 paper.pdf fig`) and look at them. Note every box, arrow, branch and loop; this is the source for the drawings.
+- Extract text with layout preserved into `reference/` (e.g. `pdftotext -layout paper.pdf reference/paper.txt`, or the pdf skill if available). Check that equations and tables survived; re-read them from page images where extraction garbles them.
+- Render the pages with the architecture and pipeline figures into `reference/` (e.g. `pdftoppm -r 110 -png -f 3 -l 4 paper.pdf reference/fig`) and look at them. Note every box, arrow, branch and loop; this is the source for the drawings.
 - Read the appendix: implementation details and hyperparameters often live there and are what makes the embodiment sufficient.
 - Note the arXiv identifier, version, venue line and any "Published in"/DOI marks for the disclosure assessment.
 

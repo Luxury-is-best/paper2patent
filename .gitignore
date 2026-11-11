@@ -27,5 +27,10 @@ Thumbs.db
 # Evaluation inputs and outputs bundled with the skill (papers may be unpublished)
 skills/paper2patent/evals/inputs/
 skills/paper2patent/evals/runs/
-gudie/
 reference/
+
+# users' output directories
+out/
+
+# work Buddy workspace
+.workbuddy/

@@ -93,7 +93,7 @@ The checker warns (code F10) when the claims describe such a mechanism but no dr
 ## Generation and review
 
 ```bash
-python <skill>/scripts/generate_patent_drawings.py patent.json -o out --update-json
+python <skill>/scripts/generate_patent_drawings.py reference/patent.json -o reference --update-json
 ```
 
 Writes `<prefix>_图N.svg` and `<prefix>_图N.png` (300 dpi, grayscale, real Chinese font) and fills `drawing_assets` and `image_model_prompts` in the JSON. It fails loudly on unknown node IDs, empty labels, figure numbers inside labels, or when no Chinese font is available (set `PATENT_CJK_FONT=/path/to/font` if needed).

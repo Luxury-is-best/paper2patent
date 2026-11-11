@@ -575,6 +575,7 @@ def main() -> int:
     report = run_checks(data)
     print(format_report(report))
     if args.json:
+        args.json.parent.mkdir(parents=True, exist_ok=True)
         args.json.write_text(json.dumps({"errors": report.errors, "warnings": report.warnings, "items": report.items},
                                         ensure_ascii=False, indent=2), encoding="utf-8")
     return 1 if report.errors else 0

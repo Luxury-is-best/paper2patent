@@ -47,9 +47,9 @@ python <skill>/fto/fto_patent_check.py quota
 # （若 mcp_auth.configured 为 false，引导用户提供密钥后一键写入本地隔离文件 fto/mcp.local.json）
 python <skill>/fto/fto_patent_check.py set-token <YOUR_PATENT_MCP_TOKEN>
 
-# 2. 基于已生成的 patent.json 执行核心特征拆解、语义+布尔双路检索及 Top 候选专利权项拉取
-python <skill>/fto/fto_patent_check.py auto-screen patent.json \
-  -o out/fto_candidates.json \
+# 2. 基于已生成的 reference/patent.json 执行核心特征拆解、语义+布尔双路检索及 Top 候选专利权项拉取
+python <skill>/fto/fto_patent_check.py auto-screen reference/patent.json \
+  -o reference/fto_candidates.json \
   --semantic-limit 15 \
   --boolean-limit 10 \
   --detail-limit 8 \
@@ -60,14 +60,14 @@ python <skill>/fto/fto_patent_check.py auto-screen patent.json \
 > ```bash
 > # 自定义智慧芽 P002 布尔检索（合法字段前缀：TTL / ABST / CLMS / DESC / TACD / AN / IPC / CPC / APD / PBD）
 > python <skill>/fto/fto_patent_check.py search --mode boolean \
->   -q 'TTL:("低照度") AND CLMS:("多尺度" AND "注意力")' --limit 10 -o out/fto_extra_search.json
+>   -q 'TTL:("低照度") AND CLMS:("多尺度" AND "注意力")' --limit 10 -o reference/fto_extra_search.json
 >
 > # 对筛选出的高危公开号补充拉取独立权利要求与法律状态
-> python <skill>/fto/fto_patent_check.py fetch-details CN113052814A CN111462008B -o out/fto_extra_details.json
+> python <skill>/fto/fto_patent_check.py fetch-details CN113052814A CN111462008B -o reference/fto_extra_details.json
 > ```
 
 ### 步骤 8.2：法律状态过滤与高危专利甄别
-读取 `out/fto_candidates.json` 中的 `deep_fetched_candidates`，首先核查每件专利的法律状态与法域：
+读取 `reference/fto_candidates.json` 中的 `deep_fetched_candidates`，首先核查每件专利的法律状态与法域：
 1. **有效专利（已授权且维持有效，如 `CN...B` 且法律状态为“有效/授权”）**：属于**直接 FTO 侵权风险排查对象**。
 2. **审中专利（实质审查中/公开未授权，如 `CN...A` 且状态为“审中”）**：属于**潜在/预警风险对象**（其权利要求在审查中可能缩限或驳回，需评估若按现有公开权项授权是否会覆盖我方方案，并建议纳入监控）。
 3. **失效专利（撤回、驳回、未缴年费终止、届满）**：进入公有领域，**无 FTO 侵权风险**（可作为我方自由实施的现有技术抗辩依据，在报告中标为 `NONE` 低/无风险）。
@@ -88,10 +88,10 @@ python <skill>/fto/fto_patent_check.py auto-screen patent.json \
    - **`NONE`（无风险）**：目标专利已失效（驳回/撤回/终止），或技术路线完全不相关。
 
 ### 步骤 8.4：编写 `fto_analysis.json` 并生成 FTO 撞库排查报告（MD + DOCX）
-将逐项比对结果整理为结构化的 `out/fto_analysis.json`（JSON 格式规范见下文第三节），随后运行 `report` 子命令一键生成 Markdown 与 Word（DOCX）双格式报告：
+将逐项比对结果整理为结构化的 `reference/fto_analysis.json`（JSON 格式规范见下文第三节），随后运行 `report` 子命令一键生成 Markdown 与 Word（DOCX）双格式报告至 `out/`：
 
 ```bash
-python <skill>/fto/fto_patent_check.py report out/fto_analysis.json \
+python <skill>/fto/fto_patent_check.py report reference/fto_analysis.json \
   --md-output out/<名称>_FTO撞库排查报告.md \
   --docx-output out/<名称>_FTO撞库排查报告.docx
 ```
@@ -100,7 +100,7 @@ python <skill>/fto/fto_patent_check.py report out/fto_analysis.json \
 
 ## 三、`fto_analysis.json` 结构规范
 
-Agent 在完成权利要求比对后，按以下结构写入 `out/fto_analysis.json` 供 `report` 子命令渲染：
+Agent 在完成权利要求比对后，按以下结构写入 `reference/fto_analysis.json` 供 `report` 子命令渲染：
 
 ```json
 {
