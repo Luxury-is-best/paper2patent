@@ -1,4 +1,4 @@
 interface:
   display_name: "Paper2Patent"
-  short_description: "Draft Chinese invention patent applications from papers"
-  default_prompt: "Use $paper2patent to turn my paper into a Chinese invention patent application draft: check its disclosure status, plan the claims, and generate the DOCX/PDF with patent drawings plus the drafting notes."
+  short_description: "将学术论文转化为中国发明专利申请文件（DOCX/PDF/黑白附图）并执行 FTO 防侵权撞库排查"
+  default_prompt: "使用 $paper2patent 将这篇论文转化为中国发明专利申请初稿：核查公开状态与新颖性风险，规划权利要求布局，生成带黑白附图的申请文件（DOCX/PDF）与《撰写说明》，并执行智慧芽 FTO 防侵权撞库排查。"
