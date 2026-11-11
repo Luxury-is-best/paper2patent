@@ -1,5 +1,18 @@
 # 更新记录
 
+## v0.0.4 (2026-11-11) · 拆分 Evals 为独立配套仓库 `paper2patent-evals` 并规范 `reference/` 与 `out/` 目录隔离
+
+- **将评测套件从主 Skill 反向拆分为独立仓库 [`paper2patent-evals`](https://github.com/Luxury-is-best/paper2patent-evals)（`v0.0.1`）**：
+  - 将原 `skills/paper2patent/evals/`（曾在 2026-10-27 迁入主 Skill）独立为单独的 Git 仓库与独立 Skill `paper2patent-evals`，使 `paper2patent` 主分发包更轻量纯净，避免常规论文转专利任务误加载或误触发评测流程。
+  - **双仓库联动与评测标尺解耦**：`paper2patent-evals` 的 `grade_structure.py` 通过 `--skill-dir`（或环境变量 `PAPER2PATENT_SKILL_DIR`、默认同级目录自动发现）加载同一份 `paper2patent` 的 `check_patent_draft.py` 对新旧版本产物统一打分，并在 `summary.json` / `grading.json` 中记录 `checker_skill_dir`、`checker_version` 与 `evals_version`；同时新增第二层盲评模型配置与引导骨架 `judge_pairwise.py`（支持 `openai`、`anthropic`、`self` 三种模式，API Key 仅从环境变量读取）。
+  - 更新 `SKILL.md`、`README.md` 与 `.gitignore`，说明两仓库独立及配合使用方式，主包打包命令不再包含或排除 `evals/`。
+- **中间产物（`reference/`）与最终交付产物（`out/`）目录严格隔离**：
+  - 在 `SKILL.md`、`references/document-generation.md`、`references/drawing-generation.md`、`references/input-requirements.md` 与 `fto/fto-workflow.md` 中统一规范：所有供下游脚本或 Agent 消费的中间产物（`reference/paper.txt`、`reference/patent.json`、`reference/check_report.json`、附图 SVG/PNG、PDF 预览图 `reference/preview/`、FTO 检索与比对中间 JSON `reference/fto_*.json`）统一存放于 `reference/`；最终交付给用户的 DOCX/PDF 申请文件、撰写说明与 FTO 报告统一输出至 `out/`。
+  - `scripts/check_patent_draft.py`（`--json`）与 `scripts/patent_common.py`（`write_json`）新增父目录自动创建（`mkdir(parents=True, exist_ok=True)`），防止首次写入 `reference/` 子目录时报错。
+- **路由通道说明微调与版本号收敛至 `0.0.4`**：
+  - `SKILL.md` 的 `description` 补充支持“聊天内容”输入，`text-only` 路由通道明确定义为“写 JSON 但不出 DOCX”。
+  - 移除仓库根目录冗余的 `VERSION` 文件，统一以 `skills/paper2patent/VERSION`（当前 `0.0.4`）作为唯一版本源，同步更新 `SKILL.md` Frontmatter、`README.md` 与 CLI `--version`。
+
 ## v0.0.3 (2026-11-08) · 规范极简最终输出（路由通道 + 交付产物）与无专利数据库明确报告
 
 - **规范极简最终输出（`SKILL.md` 步骤 7）**：
